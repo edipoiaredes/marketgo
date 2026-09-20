@@ -195,7 +195,15 @@ function save(){localStorage.setItem('mg_cart',JSON.stringify(cart));localStorag
 function updateCount(){document.getElementById('count').textContent=cart.reduce((s,x)=>s+x.qty,0)}
 function catCard(c){return `<button class="cat" onclick="openCat(${JSON.stringify(c)})"><div class="ico">${c.split(' ')[0]}</div>${c.substring(c.indexOf(' ')+1)}</button>`}
 function card(p){return `<div class="card"><div class="pic">${p.emoji}</div><h3>${p.name}</h3><div class="muted"><b>${p.brand||"Sem marca"}</b> • ${p.unit}</div><div class="price">R$ ${money(p.price)}</div><button class="add" onclick="add(${JSON.stringify(p.name)})">+ Adicionar</button></div>`}
-function render(){homeCats.innerHTML=Object.keys(categories).slice(0,4).map(catCard).join('');cats.innerHTML=Object.keys(categories).map(catCard).join('');featured.innerHTML=products.slice(0,4).map(card).join('');renderCart();renderOrders();adminDashboard();updateCount()}
+function render(){
+ const hc=document.getElementById('homeCats');
+ const cg=document.getElementById('cats');
+ const ft=document.getElementById('featured');
+ if(hc)hc.innerHTML=Object.keys(categories).slice(0,4).map(catCard).join('');
+ if(cg)cg.innerHTML=Object.keys(categories).map(catCard).join('');
+ if(ft)ft.innerHTML=products.slice(0,4).map(card).join('');
+ renderCart();renderOrders();adminDashboard();updateCount();
+}
 function openCat(c){ptitle.textContent=c;setBrandOptions(c);productsGrid.innerHTML=products.filter(p=>p.cat===c).map(card).join('');go('products')}
 function showAll(){ptitle.textContent='Todos os produtos';setBrandOptions('');productsGrid.innerHTML=products.map(card).join('');go('products')}
 function add(name){let p=products.find(x=>x.name===name),i=cart.find(x=>x.name===name);i?i.qty++:cart.push({name:p.name,price:p.price,unit:p.unit,emoji:p.emoji,qty:1});save();toast('Produto adicionado')}
@@ -310,6 +318,7 @@ function showOfferType(type){
  toast(labels[type]||'Produtos');
 }
 
+renderHomeOffers();
 </script>
 </body>
 </html>
