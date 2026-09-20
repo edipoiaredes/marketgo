@@ -134,7 +134,12 @@ body{background:linear-gradient(180deg,#fbfdf9 0%,#f7faf7 100%);color:#183026}
 <div id="freeDeliveryProgress" style="margin-top:12px;font-weight:700"></div>
 <small class="muted">A previsão é uma estimativa e pode mudar conforme distância, rota, tamanho da compra e quantidade de pedidos no momento.</small>
 </div>
-<div class="field"><label>Forma de pagamento</label><select id="cpay"><option>Pix</option><option>Cartão na entrega</option><option>Dinheiro na entrega</option></select></div>
+<div class="field"><label>Forma de pagamento</label>
+<select id="cpay" onchange="renderPaymentChoice()">
+<option value="PIX">PIX</option>
+<option value="Cartão">Cartão</option>
+</select></div>
+<div style="font-size:12px;color:#667;margin-top:4px">🔒 Pagamento protegido: não armazenamos dados do cartão.</div><div id="paymentChoiceBox" class="box" style="background:#f7fbf8;border:1px solid #dcefe2;margin:10px 0"></div>
   <div class="field"><label>Observação</label><textarea id="cnote" rows="3" placeholder="Ex.: tocar a campainha..."></textarea></div>
   <button class="btn" style="width:100%" onclick="placeOrder()">Enviar pedido</button>
  </div>
@@ -297,6 +302,25 @@ function updateDeliveryOptions(){
 }
 
 function deliveryAddress(prefix='c'){let bairro=document.getElementById(prefix+'neighborhood').value,rua=document.getElementById(prefix+'street').value.trim(),numero=document.getElementById(prefix+'number').value.trim(),ref=document.getElementById(prefix+'reference').value.trim();return {bairro,rua,numero,ref,address:`${rua}, ${numero} - ${bairro}, Jaguaribe - CE${ref?' • Ref.: '+ref:''}`}}
+
+function renderPaymentChoice(){
+ const box=document.getElementById('paymentChoiceBox'); if(!box)return;
+ const method=document.getElementById('cpay')?.value||'PIX';
+ if(method==='PIX'){
+   box.innerHTML='<b>💠 PIX</b><br><small>Após confirmar o pedido, o pagamento PIX será gerado pelo provedor de pagamentos. O pedido só será marcado como pago após a confirmação.</small>';
+ }else{
+   box.innerHTML='<b>💳 Cartão</b><br><small>O pagamento será feito em ambiente seguro do provedor. O Minhas Compras não armazenará os dados do seu cartão.</small>';
+ }
+}
+function openPaymentStep(order){
+ const method=order.payment||'PIX';
+ const title=method==='PIX'?'💠 Pagamento por PIX':'💳 Pagamento com cartão';
+ const msg=method==='PIX'
+  ? 'Aqui será exibido o QR Code e o código PIX Copia e Cola quando conectarmos o provedor de pagamentos.'
+  : 'Aqui será aberto o checkout seguro do provedor de pagamentos para digitar os dados do cartão.';
+ alert(`${title}\n\nPedido ${order.id}\nTotal: R$ ${money(order.total)}\n\n${msg}\n\nNesta versão de teste nenhum pagamento real será cobrado.`);
+}
+
 function placeOrder(){
  if(!cart.length)return toast('Carrinho vazio');const n=cname.value.trim(),nickname=cnickname.value.trim(),p=cphone.value.trim(),d=deliveryAddress('c');
  if(!n||!p||!d.bairro||!d.rua||!d.numero)return toast('Preencha nome, WhatsApp, bairro, rua e número');
@@ -304,8 +328,9 @@ function placeOrder(){
  const priorityFee=(delivery==='Entrega'&&deliverySpeed==='Prioritária')?PRIORITY_FEE:0;
  const normalFree=delivery==='Entrega'&&subtotal>=FREE_DELIVERY_MIN;
  const total=subtotal+priorityFee;
- orders.unshift({id:'MG'+Date.now().toString().slice(-6),date:new Date().toLocaleString('pt-BR'),name:n,nickname,phone:p,address:d.address,city:'Jaguaribe - CE',neighborhood:d.bairro,street:d.rua,number:d.numero,reference:d.ref,payment:cpay.value,note:cnote.value,subtotal,priorityFee,normalFree,total,items:[...cart],delivery,deliverySpeed,status:'Recebido',statusHistory:[{status:'Recebido',date:new Date().toLocaleString('pt-BR')}]});
- cart=[];save();renderCart();renderOrders();go('orders');toast('Pedido enviado!');
+ const order={id:'MG'+Date.now().toString().slice(-6),date:new Date().toLocaleString('pt-BR'),name:n,nickname,phone:p,address:d.address,city:'Jaguaribe - CE',neighborhood:d.bairro,street:d.rua,number:d.numero,reference:d.ref,payment:cpay.value,paymentStatus:'Aguardando pagamento',note:cnote.value,subtotal,priorityFee,normalFree,total,items:[...cart],delivery,deliverySpeed,status:'Aguardando pagamento',statusHistory:[{status:'Aguardando pagamento',date:new Date().toLocaleString('pt-BR')}]};
+ orders.unshift(order);save();openPaymentStep(order);
+ cart=[];save();renderCart();renderOrders();go('orders');toast('Pedido criado — aguardando pagamento');
 }
 function normalizePhone(v){return (v||'').replace(/\D/g,'')}
 function isLogged(){return sessionStorage.getItem('mg_logged')==='1'||localStorage.getItem('mg_logged')==='1'}
@@ -446,6 +471,7 @@ document.addEventListener('input',e=>{
  if(e.target&&['cstreet','cnumber'].includes(e.target.id))updateDeliveryOptions();
 });
 updateDeliveryOptions();
+renderPaymentChoice();
 
 </script>
 </body>
