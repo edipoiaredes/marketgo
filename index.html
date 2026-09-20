@@ -32,6 +32,11 @@ main{max-width:1100px;margin:auto;padding:18px 15px 90px}.page{display:none}.pag
   <div>Sua feira, na sua porta.</div>
   <button class="btn red" onclick="go('categories')" style="margin-top:16px">Começar a comprar</button>
  </div>
+ <div class="box" style="margin-top:14px;text-align:center">
+  <b>🛒 Escolha seus produtos &nbsp; → &nbsp; 📦 Finalize o pedido &nbsp; → &nbsp; 🛵 Entregamos para você</b>
+  <div class="muted" style="margin-top:7px">Compra simples, rápida e organizada pelo próprio mercado.</div>
+ </div>
+
 
  <div class="head" style="margin-top:24px">
   <h2>🔥 Ofertas do dia</h2>
@@ -75,6 +80,7 @@ main{max-width:1100px;margin:auto;padding:18px 15px 90px}.page{display:none}.pag
 <section id="cart" class="page"><button class="back" onclick="go('home')">← Continuar comprando</button><div class="head"><h2>Meu carrinho</h2></div><div id="cartBox"></div></section>
 <section id="checkout" class="page"><button class="back" onclick="go('cart')">← Carrinho</button><div class="head"><h2>Finalizar pedido</h2></div>
  <div class="box">
+  <div class="field"><label>Como deseja receber?</label><select id="deliveryType"><option value="Entrega">🛵 Entrega em casa</option><option value="Retirada">🏪 Retirar no mercado</option></select></div>
   <div class="field"><label>Nome completo</label><input id="cname"></div><div class="field"><label>Mais conhecido como</label><input id="cnickname" placeholder="Ex.: João do Zé (opcional)"></div><div class="field"><label>WhatsApp</label><input id="cphone"></div>
   <div class="field"><label>Cidade</label><input id="ccity" value="Jaguaribe - CE" readonly></div>
   <div class="field"><label>Bairro</label><select id="cneighborhood"><option value="">Selecione o bairro</option><option value="Centro">Centro</option><option value="Aldeota">Aldeota</option><option value="Aloísio Diógenes">Aloísio Diógenes</option><option value="Américo Bezerra">Américo Bezerra</option><option value="Boa Esperança">Boa Esperança</option><option value="Celso Barreira Filho">Celso Barreira Filho</option><option value="COHAB">COHAB</option><option value="Edmar Barreira">Edmar Barreira</option><option value="Expedito Diógenes">Expedito Diógenes</option><option value="João Paulo II / Curralinho">João Paulo II / Curralinho</option><option value="José Pessoa Filho">José Pessoa Filho</option><option value="José Pinheiro da Silva">José Pinheiro da Silva</option><option value="Luiz Pinto">Luiz Pinto</option><option value="Manoel Costa Morais">Manoel Costa Morais</option><option value="Nova Brasília">Nova Brasília</option><option value="Placa Verde">Placa Verde</option><option value="Santa Paulina">Santa Paulina</option><option value="Vila Pinheiro">Vila Pinheiro</option><option value="Volta do Rio">Volta do Rio</option></select></div>
@@ -173,7 +179,12 @@ function seedBrand(name,cat){
  }
  return 'Marca do Mercado';
 }
-const products=Object.entries(categories).flatMap(([cat,arr])=>arr.map(x=>({name:x[0],price:+x[1].replace(',', '.'),unit:x[2],emoji:x[3],brand:seedBrand(x[0],cat),cat})));
+const products=Object.entries(categories).flatMap(([cat,arr])=>arr.map(x=>({
+ name:x[0],price:+x[1].replace(',', '.'),unit:x[2],emoji:x[3],
+ brand:seedBrand(x[0],cat),cat,
+ department:cat.replace(/^\S+\s*/, ''),
+ subcategory:''
+})));
 ['Arroz Branco','Feijão Carioca','Flocão de Milho / Cuscuz','Óleo de Soja'].forEach((n,i)=>{let p=products.find(x=>x.name===n);if(p){p.offerType='day';p.oldPrice=+(p.price+1.5).toFixed(2);if(i<2)p.bestSeller=true}});
 ['Macarrão Espaguete','Açúcar Cristal','Farinha de Trigo','Café Torrado e Moído'].forEach(n=>{let p=products.find(x=>x.name===n);if(p){p.offerType='week';p.oldPrice=+(p.price+1).toFixed(2)}});
 let cart=JSON.parse(localStorage.getItem('mg_cart')||'[]'),orders=JSON.parse(localStorage.getItem('mg_orders')||'[]'),customer=JSON.parse(localStorage.getItem('mg_customer')||'null');
@@ -189,7 +200,7 @@ function openCat(c){ptitle.textContent=c;setBrandOptions(c);productsGrid.innerHT
 function showAll(){ptitle.textContent='Todos os produtos';setBrandOptions('');productsGrid.innerHTML=products.map(card).join('');go('products')}
 function add(name){let p=products.find(x=>x.name===name),i=cart.find(x=>x.name===name);i?i.qty++:cart.push({name:p.name,price:p.price,unit:p.unit,emoji:p.emoji,qty:1});save();toast('Produto adicionado')}
 function change(name,d){let i=cart.find(x=>x.name===name);if(!i)return;i.qty+=d;if(i.qty<1)cart=cart.filter(x=>x.name!==name);save();renderCart()}
-function renderCart(){let b=document.getElementById('cartBox');if(!cart.length){b.innerHTML='<div class="empty">🛒<br><br>Seu carrinho está vazio.</div>';return}let t=0;b.innerHTML=cart.map(i=>{t+=i.price*i.qty;return `<div class="cartrow"><div style="font-size:30px">${i.emoji}</div><div class="grow"><b>${i.name}</b><br><span class="muted">R$ ${money(i.price)}</span></div><div class="row qty"><button onclick="change(${JSON.stringify(i.name)},-1)">−</button><b>${i.qty}</b><button onclick="change(${JSON.stringify(i.name)},1)">+</button></div></div>`}).join('')+`<div class="total"><span>Total</span><span>R$ ${money(t)}</span></div><br><button class="btn" style="width:100%" onclick="go('checkout')">Continuar</button>`}
+function renderCart(){let b=document.getElementById('cartBox');if(!cart.length){b.innerHTML='<div class="empty">🛒<br><br>Seu carrinho está vazio.<br><br><button class="btn red" onclick="go('categories')">Começar minhas compras</button></div>';return}let t=0;b.innerHTML=cart.map(i=>{t+=i.price*i.qty;return `<div class="cartrow"><div style="font-size:30px">${i.emoji}</div><div class="grow"><b>${i.name}</b><br><span class="muted">R$ ${money(i.price)}</span></div><div class="row qty"><button onclick="change(${JSON.stringify(i.name)},-1)">−</button><b>${i.qty}</b><button onclick="change(${JSON.stringify(i.name)},1)">+</button></div></div>`}).join('')+`<div class="total"><span>Total</span><span>R$ ${money(t)}</span></div><br><button class="btn" style="width:100%" onclick="go('checkout')">Continuar</button>`}
 function deliveryAddress(prefix='c'){let bairro=document.getElementById(prefix+'neighborhood').value,rua=document.getElementById(prefix+'street').value.trim(),numero=document.getElementById(prefix+'number').value.trim(),ref=document.getElementById(prefix+'reference').value.trim();return {bairro,rua,numero,ref,address:`${rua}, ${numero} - ${bairro}, Jaguaribe - CE${ref?' • Ref.: '+ref:''}`}}
 function placeOrder(){if(!cart.length)return toast('Carrinho vazio');let n=cname.value.trim(),nickname=cnickname.value.trim(),p=cphone.value.trim(),d=deliveryAddress('c');if(!n||!p||!d.bairro||!d.rua||!d.numero)return toast('Preencha nome, WhatsApp, bairro, rua e número');let total=cart.reduce((s,x)=>s+x.price*x.qty,0);orders.unshift({id:'MG'+Date.now().toString().slice(-6),date:new Date().toLocaleString('pt-BR'),name:n,nickname,phone:p,address:d.address,city:'Jaguaribe - CE',neighborhood:d.bairro,street:d.rua,number:d.numero,reference:d.ref,payment:cpay.value,note:cnote.value,total,items:[...cart],status:'Recebido'});cart=[];save();renderOrders();go('orders');toast('Pedido enviado!')}
 function normalizePhone(v){return (v||'').replace(/\D/g,'')}
@@ -242,25 +253,26 @@ function openDepartment(name){
 }
 function closeDepartment(){document.getElementById('subcategoryView').style.display='none';document.getElementById('departmentView').style.display='block';scrollTo(0,0)}
 function productSubcategory(p){
+ if(p.subcategory) return p.subcategory;
  const n=(p.name||'').toLowerCase();
  const rules=[
  ['Arroz',/arroz/],['Feijão',/feijão/],['Macarrão',/macarrão/],['Açúcar',/açúcar/],['Café',/café/],
  ['Óleos e Azeites',/óleo|azeite/],['Farinhas',/farinha|fubá|polvilho|tapioca/],
- ['Temperos e Condimentos',/sal refinado|tempero|condimento/],['Molhos',/molho|ketchup|maionese|mostarda/],
+ ['Temperos e Condimentos',/sal|tempero|condimento/],['Molhos',/molho|ketchup|maionese|mostarda/],
  ['Enlatados e Conservas',/enlat|conserva|sardinha|atum/],
  ['Cereais e Grãos',/aveia|lentilha|ervilha|grão-de-bico|soja|quinoa|linhaça|chia|gergelim|amendoim|canjica|milho|flocão|cuscuz/],
  ['Carne bovina',/carne bovina|bife|patinho|acém|coxão/],['Carne suína',/suín|porco/],['Frango',/frango|coxa|sobrecoxa|peito de frango/],
  ['Refrigerantes',/refrigerante|coca|guaraná|fanta|sprite/],['Água',/água mineral/],['Sucos',/suco/],
  ['Detergente',/detergente/],['Sabão em pó e líquido',/sabão/],['Desinfetante',/desinfetante/],['Água sanitária',/água sanitária/],
- ['Leites',/^leite| leite/],['Queijos',/queijo/],['Iogurtes',/iogurte/],
- ['Pães',/pão|pães/],['Bolos',/bolo/],['Frutas',/banana|maçã|laranja|mamão|melancia|uva/],
- ['Verduras',/alface|couve|coentro/],['Legumes',/tomate|cenoura|beterraba|abóbora|chuchu/]
+ ['Leites',/^leite| leite/],['Queijos',/queijo/],['Iogurtes',/iogurte/],['Pães',/pão|pães/],['Bolos',/bolo/],
+ ['Frutas',/banana|maçã|laranja|mamão|melancia|uva/],['Verduras',/alface|couve|coentro/],['Legumes',/tomate|cenoura|beterraba|abóbora|chuchu/]
  ];
  for(const [sub,re] of rules) if(re.test(n)) return sub;
  return '';
 }
+products.forEach(p=>{ if(!p.subcategory) p.subcategory=productSubcategory(p); });
 function chooseMarketCategory(n){
- const matched=products.filter(p=>productSubcategory(p)===n);
+ const matched=products.filter(p=>p.subcategory===n);
  ptitle.textContent=n;
  setBrandOptions('');
  productsGrid.innerHTML=matched.length?matched.map(card).join(''):`<div class="empty" style="grid-column:1/-1">📦<br><br>Ainda não há produtos cadastrados em <b>${n}</b>.</div>`;
