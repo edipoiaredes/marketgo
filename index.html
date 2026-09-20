@@ -27,25 +27,50 @@ main{max-width:1100px;margin:auto;padding:18px 15px 90px}.page{display:none}.pag
 
 <main>
 <section id="home" class="page on">
- <div class="hero"><h1>MERCADO ONLINE</h1><p>Sua feira, na sua porta.</p><button class="btn red" onclick="go('categories')">Começar a comprar</button></div>
- <div class="head"><h2>Categorias</h2><a onclick="go('categories')">Ver todas</a></div><div id="homeCats" class="grid"></div>
- <div class="head"><h2>Ofertas</h2><a onclick="showAll()">Ver produtos</a></div><div id="featured" class="grid"></div>
+ <div class="hero">
+  <h1>MERCADO ONLINE</h1>
+  <div>Sua feira, na sua porta.</div>
+  <button class="btn red" onclick="go('categories')" style="margin-top:16px">Começar a comprar</button>
+ </div>
+
+ <div class="head" style="margin-top:24px">
+  <h2>🔥 Ofertas do dia</h2>
+  <button class="back" onclick="showOfferType('day')">Ver todas</button>
+ </div>
+ <div id="dailyOffers" class="grid"></div>
+ <div id="dailyEmpty" class="box muted">As ofertas do dia aparecerão aqui quando forem cadastradas.</div>
+
+ <div class="head" style="margin-top:24px">
+  <h2>⭐ Ofertas da semana</h2>
+  <button class="back" onclick="showOfferType('week')">Ver todas</button>
+ </div>
+ <div id="weeklyOffers" class="grid"></div>
+ <div id="weeklyEmpty" class="box muted">As ofertas da semana aparecerão aqui quando forem cadastradas.</div>
+
+ <div class="head" style="margin-top:24px">
+  <h2>🛒 Mais vendidos</h2>
+  <button class="back" onclick="showOfferType('best')">Ver produtos</button>
+ </div>
+ <div id="bestSellers" class="grid"></div>
+ <div id="bestEmpty" class="box muted">Os produtos mais vendidos aparecerão aqui.</div>
 </section>
 
 <section id="categories" class="page"><button class="back" onclick="go('home')">← Voltar</button><div class="head"><h2>Categorias</h2></div>
 <div id="departmentView"><div class="muted" style="margin-bottom:12px">Escolha uma seção do mercado</div><div class="grid">
-<button class="box" onclick="openDepartment()">🍚 <b>Mercearia</b></button><button class="box" onclick="comingDepartment('Carnes e Frango')">🥩 <b>Carnes e Frango</b></button>
-<button class="box" onclick="comingDepartment('Hortifruti')">🥬 <b>Hortifruti</b></button><button class="box" onclick="comingDepartment('Padaria')">🥖 <b>Padaria</b></button>
-<button class="box" onclick="comingDepartment('Leite e Derivados')">🥛 <b>Leite e Derivados</b></button><button class="box" onclick="comingDepartment('Bebidas')">🥤 <b>Bebidas</b></button>
-<button class="box" onclick="comingDepartment('Biscoitos e Lanches')">🍪 <b>Biscoitos e Lanches</b></button><button class="box" onclick="comingDepartment('Frios e Congelados')">🧊 <b>Frios e Congelados</b></button>
-<button class="box" onclick="comingDepartment('Limpeza')">🧹 <b>Limpeza</b></button><button class="box" onclick="comingDepartment('Higiene e Perfumaria')">🧴 <b>Higiene e Perfumaria</b></button>
-<button class="box" onclick="comingDepartment('Bebê')">👶 <b>Bebê</b></button><button class="box" onclick="comingDepartment('Pet')">🐶 <b>Pet</b></button>
-<button class="box" onclick="comingDepartment('Utilidades Domésticas')">🏠 <b>Utilidades Domésticas</b></button><button class="box" onclick="comingDepartment('Churrasco')">🔥 <b>Churrasco</b></button>
-<button class="box" onclick="comingDepartment('Doces e Chocolates')">🍬 <b>Doces e Chocolates</b></button><button class="box" onclick="go('offers')">🏷️ <b>Ofertas</b></button>
+<button class="box" onclick="openDepartment('Mercearia')">🍚 <b>Mercearia</b></button><button class="box" onclick="openDepartment('Carnes e Frango')">🥩 <b>Carnes e Frango</b></button>
+<button class="box" onclick="openDepartment('Hortifruti')">🥬 <b>Hortifruti</b></button><button class="box" onclick="openDepartment('Padaria')">🥖 <b>Padaria</b></button>
+<button class="box" onclick="openDepartment('Leite e Derivados')">🥛 <b>Leite e Derivados</b></button><button class="box" onclick="openDepartment('Bebidas')">🥤 <b>Bebidas</b></button>
+<button class="box" onclick="openDepartment('Biscoitos e Lanches')">🍪 <b>Biscoitos e Lanches</b></button><button class="box" onclick="openDepartment('Frios e Congelados')">🧊 <b>Frios e Congelados</b></button>
+<button class="box" onclick="openDepartment('Limpeza')">🧹 <b>Limpeza</b></button><button class="box" onclick="openDepartment('Higiene e Perfumaria')">🧴 <b>Higiene e Perfumaria</b></button>
+<button class="box" onclick="openDepartment('Bebê')">👶 <b>Bebê</b></button><button class="box" onclick="openDepartment('Pet')">🐶 <b>Pet</b></button>
+<button class="box" onclick="openDepartment('Utilidades Domésticas')">🏠 <b>Utilidades Domésticas</b></button><button class="box" onclick="openDepartment('Churrasco')">🔥 <b>Churrasco</b></button>
+<button class="box" onclick="openDepartment('Doces e Chocolates')">🍬 <b>Doces e Chocolates</b></button><button class="box" onclick="go('offers')">🏷️ <b>Ofertas</b></button>
 </div></div>
-<div id="subcategoryView" style="display:none"><button class="back" onclick="closeDepartment()">← Todas as seções</button><div class="head"><h2>🍚 Mercearia</h2></div><div class="grid">
-<button class="box" onclick="chooseMarketCategory('Arroz')">🍚 <b>Arroz</b></button><button class="box" onclick="chooseMarketCategory('Feijão')">🫘 <b>Feijão</b></button><button class="box" onclick="chooseMarketCategory('Macarrão')">🍝 <b>Macarrão</b></button><button class="box" onclick="chooseMarketCategory('Açúcar')">🧂 <b>Açúcar</b></button><button class="box" onclick="chooseMarketCategory('Café')">☕ <b>Café</b></button><button class="box" onclick="chooseMarketCategory('Óleos e Azeites')">🫗 <b>Óleos e Azeites</b></button><button class="box" onclick="chooseMarketCategory('Farinhas')">🌾 <b>Farinhas</b></button><button class="box" onclick="chooseMarketCategory('Temperos e Condimentos')">🧂 <b>Temperos e Condimentos</b></button><button class="box" onclick="chooseMarketCategory('Molhos')">🥫 <b>Molhos</b></button><button class="box" onclick="chooseMarketCategory('Enlatados e Conservas')">🥫 <b>Enlatados e Conservas</b></button><button class="box" onclick="chooseMarketCategory('Cereais e Grãos')">🌾 <b>Cereais e Grãos</b></button>
-</div></div></section>
+<div id="subcategoryView" style="display:none">
+<button class="back" onclick="closeDepartment()">← Todas as seções</button>
+<div class="head"><h2 id="departmentTitle">Seção</h2></div>
+<div id="subcategoryGrid" class="grid"></div>
+</div></section>
 <section id="products" class="page"><button class="back" onclick="go('categories')">← Voltar</button><div class="head"><h2 id="ptitle">Produtos</h2></div><div class="box" style="margin-bottom:12px"><label style="font-size:13px;font-weight:800">Filtrar por marca</label><select id="brandFilter" onchange="filterBrands()" style="width:100%;margin-top:6px;padding:11px;border:1px solid var(--line);border-radius:10px;background:#fff"><option value="">Todas as marcas</option></select></div><div id="productsGrid" class="grid"></div></section>
 <section id="cart" class="page"><button class="back" onclick="go('home')">← Continuar comprando</button><div class="head"><h2>Meu carrinho</h2></div><div id="cartBox"></div></section>
 <section id="checkout" class="page"><button class="back" onclick="go('cart')">← Carrinho</button><div class="head"><h2>Finalizar pedido</h2></div>
@@ -118,15 +143,42 @@ const categories={
 "🥛 Laticínios":[["Leite Integral","5,99","1L","🥛"],["Queijo Mussarela","39,90","kg","🧀"],["Margarina","7,49","500g","🧈"],["Iogurte","4,99","un.","🥛"]],
 "🥖 Padaria":[["Pão Francês","14,90","kg","🥖"],["Pão de Forma","8,99","un.","🍞"],["Bolo Caseiro","18,90","un.","🍰"],["Tapioca","9,90","500g","🥞"]],
 "🥤 Bebidas":[["Refrigerante","8,99","2L","🥤"],["Água Mineral","2,50","500ml","💧"],["Suco","6,99","1L","🧃"],["Cerveja","4,99","lata","🍺"]],
-"🍚 Mercearia":[["Arroz","6,99","1kg","🍚"],["Feijão","8,49","1kg","🫘"],["Açúcar","4,99","1kg","🧂"],["Macarrão","3,99","500g","🍝"]],
+"🍚 Mercearia":[
+["Arroz Branco","6,99","1kg","🍚"],["Arroz Parboilizado","6,79","1kg","🍚"],["Arroz Integral","8,99","1kg","🍚"],
+["Feijão Carioca","8,49","1kg","🫘"],["Feijão Preto","8,99","1kg","🫘"],["Feijão de Corda","9,49","1kg","🫘"],["Feijão Branco","10,99","500g","🫘"],
+["Flocão de Milho / Cuscuz","3,49","500g","🌽"],["Milho para Mungunzá","4,99","500g","🌽"],["Milho para Pipoca","5,49","500g","🍿"],
+["Macarrão Espaguete","3,99","500g","🍝"],["Macarrão Parafuso","4,49","500g","🍝"],["Macarrão Penne","4,79","500g","🍝"],["Macarrão Instantâneo","2,49","un.","🍜"],
+["Óleo de Soja","7,99","900ml","🫗"],["Azeite de Oliva","29,90","500ml","🫒"],
+["Açúcar Cristal","4,99","1kg","🧂"],["Açúcar Refinado","5,49","1kg","🧂"],["Açúcar Demerara","7,99","1kg","🧂"],
+["Farinha de Trigo","5,99","1kg","🌾"],["Farinha de Mandioca","6,99","1kg","🌾"],["Farinha de Milho","4,99","500g","🌽"],["Goma de Tapioca","6,49","1kg","⚪"],
+["Aveia em Flocos","6,99","500g","🌾"],["Lentilha","8,99","500g","🫘"],["Ervilha Seca","7,49","500g","🟢"],["Grão-de-Bico","10,99","500g","🫘"],
+["Soja em Grãos","7,99","500g","🫘"],["Quinoa","16,90","250g","🌾"],["Linhaça","8,49","250g","🌾"],["Chia","12,90","250g","🌾"],
+["Gergelim","7,99","200g","🌾"],["Amendoim","8,99","500g","🥜"],["Canjica Branca","5,49","500g","🌽"],
+["Fubá de Milho","3,99","500g","🌽"],["Polvilho Doce","6,49","500g","🌾"],["Polvilho Azedo","6,99","500g","🌾"],
+["Sal Refinado","2,49","1kg","🧂"],["Sal Grosso","4,99","1kg","🧂"],["Café Torrado e Moído","16,99","500g","☕"]
+],
 "🧹 Limpeza":[["Detergente","2,49","500ml","🧴"],["Sabão em Pó","9,99","800g","🧼"],["Desinfetante","6,99","1L","🧴"],["Água Sanitária","4,49","1L","🧴"]],
 "🥬 Hortifruti":[["Banana","5,99","kg","🍌"],["Tomate","7,99","kg","🍅"],["Batata","5,49","kg","🥔"],["Alface","2,99","un.","🥬"]],
 "🧴 Higiene":[["Sabonete","2,99","un.","🧼"],["Shampoo","12,90","un.","🧴"],["Pasta de Dente","6,49","un.","🪥"],["Papel Higiênico","14,90","4 un.","🧻"]]
 };
-const brandDefaults=['Betânia','Sadia','Friboi','Coca-Cola','Camil','Ypê','Omo','Colgate']; const products=Object.entries(categories).flatMap(([cat,arr],ci)=>arr.map((x,i)=>({name:x[0],price:+x[1].replace(',', '.'),unit:x[2],emoji:x[3],brand:brandDefaults[(ci*2+i)%brandDefaults.length],cat})));
+const brandDefaults=['Marca do Mercado'];
+function seedBrand(name,cat){
+ if(cat.includes('Mercearia')){
+  if(/arroz|feijão|lentilha|grão-de-bico|ervilha|soja/i.test(name))return 'Camil';
+  if(/óleo|azeite/i.test(name))return 'Soya';
+  if(/macarrão/i.test(name))return 'Vitarella';
+  if(/flocão|cuscuz|fubá|milho|canjica/i.test(name))return 'São Braz';
+  if(/café/i.test(name))return 'Santa Clara';
+  return 'Marca do Mercado';
+ }
+ return 'Marca do Mercado';
+}
+const products=Object.entries(categories).flatMap(([cat,arr])=>arr.map(x=>({name:x[0],price:+x[1].replace(',', '.'),unit:x[2],emoji:x[3],brand:seedBrand(x[0],cat),cat})));
+['Arroz Branco','Feijão Carioca','Flocão de Milho / Cuscuz','Óleo de Soja'].forEach((n,i)=>{let p=products.find(x=>x.name===n);if(p){p.offerType='day';p.oldPrice=+(p.price+1.5).toFixed(2);if(i<2)p.bestSeller=true}});
+['Macarrão Espaguete','Açúcar Cristal','Farinha de Trigo','Café Torrado e Moído'].forEach(n=>{let p=products.find(x=>x.name===n);if(p){p.offerType='week';p.oldPrice=+(p.price+1).toFixed(2)}});
 let cart=JSON.parse(localStorage.getItem('mg_cart')||'[]'),orders=JSON.parse(localStorage.getItem('mg_orders')||'[]'),customer=JSON.parse(localStorage.getItem('mg_customer')||'null');
 
-function go(id,btn){document.querySelectorAll('.page').forEach(x=>x.classList.remove('on'));document.getElementById(id).classList.add('on');document.querySelectorAll('.bottom button').forEach(x=>x.classList.remove('sel'));if(btn)btn.classList.add('sel');if(id==='account')renderAccount();scrollTo(0,0)}
+function go(id,btn){document.querySelectorAll('.page').forEach(x=>x.classList.remove('on'));document.getElementById(id).classList.add('on');document.querySelectorAll('.bottom button').forEach(x=>x.classList.remove('sel'));if(btn)btn.classList.add('sel');if(id==='account')renderAccount();renderHomeOffers();scrollTo(0,0)}
 function money(n){return n.toFixed(2).replace('.',',')}
 function save(){localStorage.setItem('mg_cart',JSON.stringify(cart));localStorage.setItem('mg_orders',JSON.stringify(orders));updateCount()}
 function updateCount(){document.getElementById('count').textContent=cart.reduce((s,x)=>s+x.qty,0)}
@@ -163,10 +215,71 @@ function adminBrands(){const key='mg_custom_brands';const brands=[...new Set([..
 function adminOrders(){adminContent.innerHTML=orders.length?orders.map(o=>`<div class="box" style="margin:8px 0"><b>#${o.id}</b> — ${o.name}<br><span class="muted">${o.phone} • ${o.address}</span><p>R$ ${money(o.total)} • ${o.payment}</p><span class="status">${o.status}</span></div>`).join(''):'<div class="empty">Nenhum pedido recebido.</div>'}
 function adminStore(){adminContent.innerHTML='<div class="box"><h3>Dados da loja</h3><div class="field"><label>Nome do mercado</label><input value="Mercado Exemplo"></div><div class="field"><label>WhatsApp</label><input placeholder="(88) 99999-9999"></div><div class="field"><label>Taxa de entrega</label><input value="0,00"></div><button class="btn">Salvar alterações</button></div>'}
 render();fillCustomer();renderAccount();
-function openDepartment(){document.getElementById('departmentView').style.display='none';document.getElementById('subcategoryView').style.display='block';scrollTo(0,0)}
+const MARKET_SECTIONS={
+'Mercearia':['Arroz','Feijão','Macarrão','Açúcar','Café','Óleos e Azeites','Farinhas','Temperos e Condimentos','Molhos','Enlatados e Conservas','Cereais e Grãos'],
+'Carnes e Frango':['Carne bovina','Carne suína','Frango','Linguiças','Carne moída','Miúdos'],
+'Hortifruti':['Frutas','Verduras','Legumes','Raízes e Tubérculos','Temperos frescos','Ovos'],
+'Padaria':['Pães','Bolos','Tortas','Salgados','Biscoitos de padaria','Massas e misturas'],
+'Leite e Derivados':['Leites','Queijos','Iogurtes','Manteiga e Margarina','Requeijão','Bebidas lácteas'],
+'Bebidas':['Refrigerantes','Água','Sucos','Energéticos','Isotônicos','Chás e bebidas prontas'],
+'Biscoitos e Lanches':['Biscoitos doces','Biscoitos salgados','Salgadinhos','Pipocas','Snacks','Torradas'],
+'Frios e Congelados':['Presunto e Apresuntado','Mortadela','Queijos e Frios','Hambúrgueres','Pizzas congeladas','Batatas congeladas','Sorvetes e Picolés'],
+'Limpeza':['Detergente','Sabão em pó e líquido','Desinfetante','Água sanitária','Amaciante','Limpadores','Esponjas e panos','Sacos de lixo'],
+'Higiene e Perfumaria':['Sabonetes','Shampoo e Condicionador','Creme dental','Escovas de dente','Desodorantes','Papel higiênico','Absorventes','Cuidados pessoais'],
+'Bebê':['Fraldas','Lenços umedecidos','Higiene do bebê','Alimentação infantil','Mamadeiras e acessórios'],
+'Pet':['Ração para cães','Ração para gatos','Petiscos','Higiene pet','Acessórios pet'],
+'Utilidades Domésticas':['Descartáveis','Papel alumínio e filme','Potes e recipientes','Utensílios de cozinha','Fósforos e acendedores','Pilhas e lâmpadas'],
+'Churrasco':['Carvão','Espetos e grelhas','Sal grosso e temperos','Acendedores','Descartáveis para churrasco'],
+'Doces e Chocolates':['Chocolates','Bombons','Balas','Chicletes','Paçocas e doces','Gelatinas e sobremesas']
+};
+const SECTION_ICONS={'Mercearia':'🍚','Carnes e Frango':'🥩','Hortifruti':'🥬','Padaria':'🥖','Leite e Derivados':'🥛','Bebidas':'🥤','Biscoitos e Lanches':'🍪','Frios e Congelados':'🧊','Limpeza':'🧹','Higiene e Perfumaria':'🧴','Bebê':'👶','Pet':'🐶','Utilidades Domésticas':'🏠','Churrasco':'🔥','Doces e Chocolates':'🍬'};
+function openDepartment(name){
+ document.getElementById('departmentView').style.display='none';
+ document.getElementById('subcategoryView').style.display='block';
+ document.getElementById('departmentTitle').textContent=(SECTION_ICONS[name]||'🛒')+' '+name;
+ document.getElementById('subcategoryGrid').innerHTML=(MARKET_SECTIONS[name]||[]).map(x=>`<button class="box" onclick="chooseMarketCategory('${x.replace(/'/g,"\\'")}')"><b>${x}</b></button>`).join('');
+ scrollTo(0,0)
+}
 function closeDepartment(){document.getElementById('subcategoryView').style.display='none';document.getElementById('departmentView').style.display='block';scrollTo(0,0)}
-function comingDepartment(n){toast(n+' será organizada na próxima etapa')}
-function chooseMarketCategory(n){toast('Categoria: '+n)}
+function chooseMarketCategory(n){
+ const q=document.getElementById('search');
+ if(q)q.value=n;
+ go('home');
+ if(typeof render==='function')render();
+ toast('Mostrando: '+n)
+}
+
+function homeProductCard(p){
+ const price=Number(p.price||p.preco||0);
+ const old=Number(p.oldPrice||p.precoAntigo||0);
+ const name=p.name||p.nome||'Produto';
+ return `<div class="box" style="text-align:left">
+   ${p.image||p.img?`<img src="${p.image||p.img}" alt="${name}" style="width:100%;height:110px;object-fit:contain;border-radius:10px">`:''}
+   <b>${name}</b>
+   ${old>price?`<div class="muted" style="text-decoration:line-through">R$ ${old.toFixed(2).replace('.',',')}</div>`:''}
+   ${price?`<div style="font-size:20px;font-weight:800;margin:6px 0">R$ ${price.toFixed(2).replace('.',',')}</div>`:''}
+   ${p.id!==undefined?`<button class="btn" style="width:100%" onclick="addCart(${JSON.stringify(p.id)})">Adicionar</button>`:''}
+ </div>`;
+}
+function renderHomeOffers(){
+ const list=(typeof products!=='undefined'&&Array.isArray(products))?products:[];
+ const day=list.filter(p=>p.offerType==='day'||p.oferta==='dia').slice(0,4);
+ const week=list.filter(p=>p.offerType==='week'||p.oferta==='semana').slice(0,4);
+ const best=list.filter(p=>p.bestSeller===true||p.maisVendido===true).slice(0,4);
+ [['dailyOffers','dailyEmpty',day],['weeklyOffers','weeklyEmpty',week],['bestSellers','bestEmpty',best]].forEach(([grid,empty,arr])=>{
+   const g=document.getElementById(grid),e=document.getElementById(empty);
+   if(g)g.innerHTML=arr.map(homeProductCard).join('');
+   if(e)e.style.display=arr.length?'none':'block';
+ });
+}
+function showOfferType(type){
+ const labels={day:'Ofertas do dia',week:'Ofertas da semana',best:'Mais vendidos'};
+ const q=document.getElementById('search');
+ if(q)q.value='';
+ go('home');
+ toast(labels[type]||'Produtos');
+}
+
 </script>
 </body>
 </html>
