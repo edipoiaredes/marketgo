@@ -47,8 +47,10 @@ body{background:linear-gradient(180deg,#fbfdf9 0%,#f7faf7 100%);color:#183026}
 .brand-tagline{font-size:10px;font-weight:600;opacity:.9;letter-spacing:.1px;margin-top:1px;white-space:nowrap}
 .brand-wrap{display:flex;flex-direction:column;line-height:1}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
+<div id="supabaseStatus" style="position:fixed;left:10px;bottom:76px;z-index:90;background:white;border:1px solid #e3e8e4;border-radius:999px;padding:5px 9px;font-size:11px;box-shadow:0 2px 10px #00000012">☁️ Conectando ao banco...</div>
 <header class="top">
  <div class="topin">
   <div class="brand"><div><strong>MINHAS COMPRAS</strong><small>Mercado Online</small></div><button class="cart" onclick="go('cart')">🛒 <span id="count">0</span></button></div>
@@ -484,5 +486,51 @@ updateDeliveryOptions();
 renderPaymentChoice();
 
 </script>
+
+<script>
+const SUPABASE_URL = 'https://scfxkcyemfmrlokpnogk.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_Osa2M-uYXiXnBlqZN6zduQ_WrDx0Mkk';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+const MINHAS_COMPRAS_STORE_SLUG = 'mercado-teste';
+let supabaseStore = null;
+let supabaseProducts = [];
+
+async function carregarCatalogoSupabase() {
+  const badge = document.getElementById('supabaseStatus');
+  try {
+    const { data: loja, error: lojaErro } = await sb
+      .from('mercados')
+      .select('id,nome,nome_fantasia,slug,ativo')
+      .eq('slug', MINHAS_COMPRAS_STORE_SLUG)
+      .eq('ativo', true)
+      .single();
+    if (lojaErro) throw lojaErro;
+    supabaseStore = loja;
+
+    const { data: lista, error: produtosErro } = await sb
+      .from('produtos')
+      .select('id,nome,marca,preco,preco_anterior,estoque,unidade,imagem_url,oferta_dia,oferta_semana,mais_vendido,categoria_id')
+      .eq('mercado_id', loja.id)
+      .eq('ativo', true)
+      .order('nome');
+    if (produtosErro) throw produtosErro;
+
+    supabaseProducts = lista || [];
+    console.info('Minhas Compras: Supabase conectado.', {mercado: loja.nome, produtos: supabaseProducts.length});
+    if (badge) {
+      badge.textContent = `☁️ Banco online conectado • ${supabaseProducts.length} produtos`;
+      badge.style.color = '#16803a';
+    }
+  } catch (erro) {
+    console.error('Minhas Compras: falha ao carregar Supabase', erro);
+    if (badge) {
+      badge.textContent = '⚠️ Banco online indisponível — catálogo local mantido';
+      badge.style.color = '#a05a00';
+    }
+  }
+}
+document.addEventListener('DOMContentLoaded', carregarCatalogoSupabase);
+</script>
+
 </body>
 </html>
