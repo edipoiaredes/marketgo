@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MARKETGO — Mercado Online</title>
+<title>Minhas Compras — Sua feira na sua porta</title>
 <meta name="theme-color" content="#0757d9">
 <style>
 :root{--blue:#0757d9;--red:#e9272e;--bg:#f4f6f9;--text:#17202a;--muted:#6b7280;--card:#fff;--line:#e5e7eb;--green:#16a34a}
@@ -16,7 +16,7 @@ main{max-width:1100px;margin:auto;padding:18px 15px 90px}.page{display:none}.pag
 .adminnav{display:flex;gap:7px;overflow:auto;margin-bottom:14px}.adminnav button{white-space:nowrap;padding:9px 12px;border-radius:9px;background:#e8eef9;color:#1d3557;font-weight:700}.adminnav button.on{background:var(--blue);color:#fff}.table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden}.table th,.table td{padding:10px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}.danger{color:var(--red);font-weight:800}.bottom{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:8px;z-index:60}.bottom button{background:none;color:#555;font-size:11px}.bottom b{display:block;font-size:20px}.bottom .sel{color:var(--blue);font-weight:800}.fab{position:fixed;right:15px;bottom:67px;background:#19b957;color:#fff;border-radius:50%;width:52px;height:52px;font-size:24px;z-index:55}
 @media(min-width:700px){.grid{grid-template-columns:repeat(4,1fr)}.hero{padding:35px}.bottom{display:none}}
 
-/* MARKETGO - visual acolhedor */
+/* MINHAS COMPRAS - visual acolhedor */
 :root{--green:#08783f;--green2:#0aa956;--soft:#f6faf6;--cream:#fffdf6}
 body{background:linear-gradient(180deg,#fbfdf9 0%,#f7faf7 100%);color:#183026}
 .hero{
@@ -43,12 +43,15 @@ body{background:linear-gradient(180deg,#fbfdf9 0%,#f7faf7 100%);color:#183026}
 
 
 .cart-float{position:fixed;left:12px;right:12px;bottom:68px;z-index:54;background:#08783f;color:#fff;border:0;border-radius:15px;padding:12px 15px;display:none;align-items:center;justify-content:space-between;box-shadow:0 10px 28px rgba(0,80,40,.25);font-weight:800}.cart-float small{display:block;font-weight:500;opacity:.9}.cart-float strong{font-size:16px}.badge-offer{display:inline-block;background:#fff0d7;color:#9b5600;border-radius:20px;padding:4px 8px;font-size:11px;font-weight:800;margin-bottom:6px}.admin-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.admin-form-grid .wide{grid-column:1/-1}.order-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.order-actions button{padding:8px 10px;border-radius:9px;border:1px solid var(--line);background:#fff;font-weight:700}.order-actions .active{background:#08783f;color:#fff;border-color:#08783f}.stock-low{color:#b06b00;font-weight:800}@media(max-width:520px){.admin-form-grid{grid-template-columns:1fr}.admin-form-grid .wide{grid-column:auto}}
+
+.brand-tagline{font-size:10px;font-weight:600;opacity:.9;letter-spacing:.1px;margin-top:1px;white-space:nowrap}
+.brand-wrap{display:flex;flex-direction:column;line-height:1}
 </style>
 </head>
 <body>
 <header class="top">
  <div class="topin">
-  <div class="brand"><div><strong>MARKETGO</strong><small>Mercado Online</small></div><button class="cart" onclick="go('cart')">🛒 <span id="count">0</span></button></div>
+  <div class="brand"><div><strong>MINHAS COMPRAS</strong><small>Mercado Online</small></div><button class="cart" onclick="go('cart')">🛒 <span id="count">0</span></button></div>
   <input id="search" class="search" placeholder="🔎 Buscar produtos..." oninput="doSearch(this.value)">
  </div>
 </header>
@@ -57,7 +60,7 @@ body{background:linear-gradient(180deg,#fbfdf9 0%,#f7faf7 100%);color:#183026}
 <section id="home" class="page on">
  <div class="hero">
    <h1>Mais tempo para o que realmente importa 💚</h1>
-   <div class="heroLead">Suas compras do mercado sem sair de casa. Escolha com calma e a equipe prepara tudo para você.</div>
+   <div class="heroLead">Sua feira na sua porta. Escolha com calma e a equipe prepara tudo para você.</div>
    <button class="btn red" onclick="go('categories')" style="margin-top:18px;max-width:210px">Começar minhas compras</button>
  </div>
 
@@ -285,7 +288,7 @@ function adminTab(tab){
  document.querySelectorAll('.adminnav button').forEach(x=>x.classList.remove('on'));const labels={dashboard:'Resumo',products:'Produtos',orders:'Pedidos',store:'Minha loja'};[...document.querySelectorAll('.adminnav button')].find(x=>x.textContent.trim()===labels[tab])?.classList.add('on');
  if(tab==='dashboard')adminDashboard();if(tab==='products')adminProducts();if(tab==='orders')adminOrders();if(tab==='store')adminStore();
 }
-function adminDashboard(){if(!document.getElementById('adminContent'))return;adminContent.innerHTML=`<div class="grid"><div class="box"><b>Pedidos</b><h2>${orders.length}</h2></div><div class="box"><b>Produtos</b><h2>${products.length}</h2></div><div class="box"><b>Carrinho</b><h2>${cart.reduce((s,x)=>s+x.qty,0)}</h2></div><div class="box"><b>Marca</b><h2>MARKETGO</h2></div></div><br><div class="box"><b>Fluxo da loja</b><p>Cliente compra → pedido chega ao mercado → mercado separa → entrega ao cliente.</p><button class="btn green" onclick="go('orders')">Ver pedidos</button></div>`}
+function adminDashboard(){if(!document.getElementById('adminContent'))return;adminContent.innerHTML=`<div class="grid"><div class="box"><b>Pedidos</b><h2>${orders.length}</h2></div><div class="box"><b>Produtos</b><h2>${products.length}</h2></div><div class="box"><b>Carrinho</b><h2>${cart.reduce((s,x)=>s+x.qty,0)}</h2></div><div class="box"><b>Marca</b><h2>MINHAS COMPRAS</h2></div></div><br><div class="box"><b>Fluxo da loja</b><p>Cliente compra → pedido chega ao mercado → mercado separa → entrega ao cliente.</p><button class="btn green" onclick="go('orders')">Ver pedidos</button></div>`}
 function adminBrands(){const key='mg_custom_brands';const brands=[...new Set([...getBrands(),...(JSON.parse(localStorage.getItem(key)||'[]'))])].sort((a,b)=>a.localeCompare(b,'pt-BR'));adminContent.innerHTML=`<div class="box"><div class="between"><b>Cadastro de marcas</b><button class="btn" onclick="newBrand()">+ Nova marca</button></div><p class="muted">Cadastre marcas para usar no catálogo.</p>${brands.map(b=>`<div class="between" style="padding:10px 0;border-bottom:1px solid var(--line)"><span>🏷️ ${b}</span><span class="muted">${products.filter(p=>p.brand===b).length} produtos</span></div>`).join('')}</div>`} function newBrand(){const n=prompt('Nome da nova marca:');if(!n||!n.trim())return;const key='mg_custom_brands',a=JSON.parse(localStorage.getItem(key)||'[]');if(!a.includes(n.trim()))a.push(n.trim());localStorage.setItem(key,JSON.stringify(a));toast('Marca cadastrada');adminBrands()} function adminProducts(){
  adminContent.innerHTML=`<div class="box"><div class="between"><b>Catálogo de produtos</b><div class="row"><button class="btn light" onclick="adminBrands()">🏷️ Marcas</button><button class="btn" onclick="showProductForm()">+ Novo produto</button></div></div><p class="muted">Cadastre produtos com categoria, preço, estoque e destaque.</p></div><div id="productFormBox"></div><br><div class="box"><table class="table"><tr><th>Produto</th><th>Categoria</th><th>Preço</th><th>Estoque</th></tr>${products.map(p=>`<tr><td>${p.emoji||'🛒'} ${p.name}<br><span class="muted">${p.brand||''}</span></td><td>${p.subcategory||p.cat}</td><td>R$ ${money(Number(p.price))}</td><td>${p.stock??'—'}</td></tr>`).join('')}</table></div>`;
 }
