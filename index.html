@@ -163,7 +163,7 @@ body{padding-bottom:82px !important}
 <div style="margin-top:10px">
 <label style="display:flex;gap:8px;align-items:flex-start">
 <input type="radio" name="deliverySpeed" value="Normal" checked onchange="updateDeliveryOptions()" style="width:auto;margin-top:3px">
-<span><b>Entrega normal</b><br><small id="normalDeliveryInfo">Até 3 km: R$ 4,99 • Acima de 3 km: R$ 6,99.</small></span>
+<span><b>Entrega normal</b><br><small id="normalDeliveryInfo">Até 2 km: R$ 3,00 • acima de 2 km: + R$ 1,00 por km excedente.</small></span>
 </label>
 <label style="display:flex;gap:8px;align-items:flex-start;margin-top:10px">
 <input type="radio" name="deliverySpeed" value="Prioritária" onchange="updateDeliveryOptions()" style="width:auto;margin-top:3px">
@@ -171,7 +171,7 @@ body{padding-bottom:82px !important}
 </label>
 </div>
 <div id="freeDeliveryProgress" style="margin-top:12px;font-weight:700"></div>
-<small class="muted">Frete normal: até 3 km R$ 4,99; acima de 3 km R$ 6,99; grátis a partir de R$ 150. A distância será calculada pela rota quando o serviço de mapas estiver conectado. A previsão é uma estimativa e pode mudar conforme rota, tamanho da compra e quantidade de pedidos.</small>
+<small class="muted">Frete normal: até 2 km R$ 3,00; acima de 2 km, R$ 3,00 + R$ 1,00 por km excedente. Compras a partir de R$ 100 têm frete normal grátis somente até 5 km. A distância será calculada pela rota quando o serviço de mapas estiver conectado. A previsão é uma estimativa e pode mudar conforme rota, tamanho da compra e quantidade de pedidos.</small>
 </div>
 <div class="field"><label>Forma de pagamento</label>
 <select id="cpay" onchange="renderPaymentChoice()">
@@ -337,18 +337,20 @@ function add(name){
  i?i.qty++:cart.push({name:p.name,price:Number(p.price),unit:p.unit,emoji:p.emoji||'🛒',qty:1});save();renderCart();toast('Produto adicionado');
 }
 function change(name,d){let i=cart.find(x=>x.name===name);if(!i)return;i.qty+=d;if(i.qty<1)cart=cart.filter(x=>x.name!==name);save();renderCart()}
-function renderCart(){let b=document.getElementById('cartBox');if(!cart.length){b.innerHTML=`<div class="empty">🛒<br><br>Seu carrinho está vazio.<br><br><button class="btn red" onclick="go('categories')">Começar minhas compras</button></div>`;return}let t=0;b.innerHTML=cart.map(i=>{t+=i.price*i.qty;return `<div class="cartrow"><div style="font-size:30px">${i.emoji}</div><div class="grow"><b>${i.name}</b><br><span class="muted">R$ ${money(i.price)}</span></div><div class="row qty"><button onclick="change(${JSON.stringify(i.name)},-1)">−</button><b>${i.qty}</b><button onclick="change(${JSON.stringify(i.name)},1)">+</button></div></div>`}).join('')+`<div class="total"><span>Total</span><span>R$ ${money(t)}</span></div><div style="margin:10px 0;font-weight:700;color:#16803a">${t>=FREE_DELIVERY_MIN?'🎉 Você ganhou entrega normal grátis!':'🛵 Faltam R$ '+money(FREE_DELIVERY_MIN-t)+' para entrega normal grátis.'}</div><br><button class="btn" style="width:100%" onclick="go('checkout')">Continuar</button>`}
+function renderCart(){let b=document.getElementById('cartBox');if(!cart.length){b.innerHTML=`<div class="empty">🛒<br><br>Seu carrinho está vazio.<br><br><button class="btn red" onclick="go('categories')">Começar minhas compras</button></div>`;return}let t=0;b.innerHTML=cart.map(i=>{t+=i.price*i.qty;return `<div class="cartrow"><div style="font-size:30px">${i.emoji}</div><div class="grow"><b>${i.name}</b><br><span class="muted">R$ ${money(i.price)}</span></div><div class="row qty"><button onclick="change(${JSON.stringify(i.name)},-1)">−</button><b>${i.qty}</b><button onclick="change(${JSON.stringify(i.name)},1)">+</button></div></div>`}).join('')+`<div class="total"><span>Total</span><span>R$ ${money(t)}</span></div><div style="margin:10px 0;font-weight:700;color:#16803a">${t>=FREE_DELIVERY_MIN?'🎉 Sua compra pode ter frete grátis em entregas de até 5 km.':'🛵 Faltam R$ '+money(FREE_DELIVERY_MIN-t)+' para liberar frete grátis até 5 km.'}</div><br><button class="btn" style="width:100%" onclick="go('checkout')">Continuar</button>`}
 
-const FREE_DELIVERY_MIN=150;
+const FREE_DELIVERY_MIN=100;
+const FREE_DELIVERY_MAX_KM=5;
 const PRIORITY_FEE=6.99;
-const NEAR_DELIVERY_FEE=4.99;
-const FAR_DELIVERY_FEE=6.99;
-const NEAR_DISTANCE_KM=3;
+const NEAR_DELIVERY_FEE=3.00;
+const EXTRA_KM_FEE=1.00;
+const NEAR_DISTANCE_KM=2;
 function cartSubtotal(){return cart.reduce((s,x)=>s+Number(x.price)*x.qty,0)}
 function deliveryFeeFromDistance(distanceKm, subtotal){
- if(subtotal>=FREE_DELIVERY_MIN)return 0;
  if(typeof distanceKm!=='number'||!isFinite(distanceKm))return null;
- return distanceKm<=NEAR_DISTANCE_KM?NEAR_DELIVERY_FEE:FAR_DELIVERY_FEE;
+ if(subtotal>=FREE_DELIVERY_MIN && distanceKm<=FREE_DELIVERY_MAX_KM)return 0;
+ if(distanceKm<=NEAR_DISTANCE_KM)return NEAR_DELIVERY_FEE;
+ return NEAR_DELIVERY_FEE+((distanceKm-NEAR_DISTANCE_KM)*EXTRA_KM_FEE);
 }
 function selectedDeliverySpeed(){return document.querySelector('input[name="deliverySpeed"]:checked')?.value||'Normal'}
 function updateDeliveryOptions(){
@@ -356,7 +358,7 @@ function updateDeliveryOptions(){
  const normal=document.getElementById('normalDeliveryInfo');
  const progress=document.getElementById('freeDeliveryProgress');
  const type=document.getElementById('deliveryType')?.value||'Entrega';
- if(normal)normal.innerHTML=free?'<b style="color:#16803a">GRÁTIS</b> nesta compra.':'Até 3 km: <b>R$ 4,99</b> • acima de 3 km: <b>R$ 6,99</b>.';
+ if(normal)normal.innerHTML=free?'Compra qualificada para <b style="color:#16803a">frete grátis até 5 km</b>.':'Até 2 km: <b>R$ 3,00</b> • acima de 2 km: <b>+ R$ 1,00/km excedente</b>.';
  if(progress){
    if(type==='Retirada') progress.innerHTML='🏪 Retirada no mercado: sem taxa de entrega.';
    else if(free) progress.innerHTML='🎉 Você ganhou entrega normal grátis!';
@@ -1016,6 +1018,94 @@ window.adminTab=function(tab){
  return mcOldAdminTab(tab);
 };
 window.adminDashboard=mcDashboardOnline;
+</script>
+
+
+<script>
+/* ===== CONTA DO CLIENTE • SUPABASE ===== */
+async function mcClienteMercadoId(){
+  if(supabaseStore?.id) return supabaseStore.id;
+  const {data,error}=await sb.from('mercados').select('id').eq('slug',MINHAS_COMPRAS_STORE_SLUG).eq('ativo',true).single();
+  if(error) throw error; return data.id;
+}
+async function mcPerfilCliente(user){
+  const mid=await mcClienteMercadoId();
+  const {data,error}=await sb.from('clientes').select('*').eq('mercado_id',mid).eq('usuario_id',user.id).maybeSingle();
+  if(error) throw error; return data;
+}
+async function mcCriarPerfilCliente(user,d={}){
+  const mid=await mcClienteMercadoId();
+  const payload={mercado_id:mid,usuario_id:user.id,nome:d.nome||user.user_metadata?.nome||user.email?.split('@')[0]||'Cliente',apelido:d.apelido||null,whatsapp:d.whatsapp||null,email:user.email,cidade:d.cidade||'Jaguaribe',bairro:d.bairro||null,rua:d.rua||null,numero:d.numero||null,referencia:d.referencia||null,ativo:true};
+  const {data,error}=await sb.from('clientes').insert(payload).select().single();
+  if(error) throw error; return data;
+}
+async function mcClienteSessao(){
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session) return null;
+  const perfil=await mcPerfilCliente(session.user);
+  return {user:session.user,perfil};
+}
+async function mcRenderConta(){
+ const page=document.getElementById('account'); if(!page)return;
+ let s=null; try{s=await mcClienteSessao()}catch(e){console.error(e)}
+ if(s?.perfil){
+  const p=s.perfil;
+  page.innerHTML=`<div class="head"><h2>MINHA CONTA</h2><a onclick="go('home')">Voltar</a></div>
+  <div class="box"><h3>👤 ${mcEsc(p.nome)}</h3><p>${mcEsc(p.email||s.user.email||'')}<br>${mcEsc(p.whatsapp||'')}</p></div>
+  <div class="box"><b>📍 Endereço de entrega</b><p>${mcEsc(p.rua||'')} ${mcEsc(p.numero||'')}<br>${mcEsc(p.bairro||'')} • ${mcEsc(p.cidade||'Jaguaribe')}<br>${mcEsc(p.referencia||'')}</p></div>
+  <button class="btn green" style="width:100%" onclick="go('orders')">Meus pedidos</button><br><br>
+  <button class="btn light" style="width:100%" onclick="mcSairCliente()">Sair da conta</button>`;
+ }else{
+  page.innerHTML=`<div class="head"><h2>MINHA CONTA</h2><a onclick="go('home')">Voltar</a></div>
+  <div class="box"><h3>Entrar</h3><div class="field"><label>E-mail</label><input id="cliEmail" type="email"></div><div class="field"><label>Senha</label><input id="cliSenha" type="password"></div><button class="btn green" style="width:100%" onclick="mcEntrarCliente()">Entrar</button><div id="cliMsg" class="muted"></div></div>
+  <div class="box"><h3>Criar conta</h3>
+  <div class="field"><label>Nome completo *</label><input id="cadNome"></div>
+  <div class="field"><label>Mais conhecido como</label><input id="cadApelido"></div>
+  <div class="field"><label>WhatsApp</label><input id="cadWhats"></div>
+  <div class="field"><label>E-mail *</label><input id="cadEmail" type="email"></div>
+  <div class="field"><label>Senha *</label><input id="cadSenha" type="password" minlength="6"></div>
+  <div class="field"><label>Cidade</label><input id="cadCidade" value="Jaguaribe"></div>
+  <div class="field"><label>Bairro</label><input id="cadBairro"></div>
+  <div class="field"><label>Rua/Avenida</label><input id="cadRua"></div>
+  <div class="field"><label>Número</label><input id="cadNumero"></div>
+  <div class="field"><label>Referência</label><input id="cadRef"></div>
+  <button class="btn green" style="width:100%" onclick="mcCadastrarCliente()">Criar minha conta</button><div id="cadMsg" class="muted"></div></div>`;
+ }
+}
+async function mcEntrarCliente(){
+ const msg=document.getElementById('cliMsg'); msg.textContent='Entrando...';
+ try{
+  const {data,error}=await sb.auth.signInWithPassword({email:cliEmail.value.trim(),password:cliSenha.value});
+  if(error)throw error;
+  let p=await mcPerfilCliente(data.user); if(!p)p=await mcCriarPerfilCliente(data.user);
+  toast('Login realizado'); await mcRenderConta();
+ }catch(e){console.error(e);msg.textContent='⚠️ E-mail ou senha inválidos.'}
+}
+async function mcCadastrarCliente(){
+ const msg=document.getElementById('cadMsg');
+ const d={nome:cadNome.value.trim(),apelido:cadApelido.value.trim(),whatsapp:cadWhats.value.trim(),email:cadEmail.value.trim(),senha:cadSenha.value,cidade:cadCidade.value.trim(),bairro:cadBairro.value.trim(),rua:cadRua.value.trim(),numero:cadNumero.value.trim(),referencia:cadRef.value.trim()};
+ if(!d.nome||!d.email||d.senha.length<6){msg.textContent='⚠️ Informe nome, e-mail e uma senha com pelo menos 6 caracteres.';return}
+ msg.textContent='Criando conta...';
+ try{
+  const {data,error}=await sb.auth.signUp({email:d.email,password:d.senha,options:{data:{nome:d.nome}}});
+  if(error)throw error;
+  if(data.session){
+   await mcCriarPerfilCliente(data.user,d);
+   toast('Conta criada'); await mcRenderConta();
+  }else{
+   msg.textContent='✅ Conta criada. Verifique seu e-mail para confirmar o cadastro e depois faça login.';
+  }
+ }catch(e){console.error(e);msg.textContent='⚠️ '+(e.message||'Não foi possível criar a conta.')}
+}
+async function mcSairCliente(){await sb.auth.signOut();toast('Você saiu da conta');await mcRenderConta()}
+
+/* Quando Conta for aberta, renderiza a versão Supabase. */
+const mcGoBase=window.go;
+window.go=function(id,btn){
+ const r=mcGoBase(id,btn);
+ if(id==='account') setTimeout(mcRenderConta,0);
+ return r;
+};
 </script>
 
 </body>
