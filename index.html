@@ -32,7 +32,20 @@ main{max-width:1100px;margin:auto;padding:18px 15px 90px}.page{display:none}.pag
  <div class="head"><h2>Ofertas</h2><a onclick="showAll()">Ver produtos</a></div><div id="featured" class="grid"></div>
 </section>
 
-<section id="categories" class="page"><button class="back" onclick="go('home')">← Voltar</button><div class="head"><h2>Categorias</h2></div><div id="cats" class="grid"></div></section>
+<section id="categories" class="page"><button class="back" onclick="go('home')">← Voltar</button><div class="head"><h2>Categorias</h2></div>
+<div id="departmentView"><div class="muted" style="margin-bottom:12px">Escolha uma seção do mercado</div><div class="grid">
+<button class="box" onclick="openDepartment()">🍚 <b>Mercearia</b></button><button class="box" onclick="comingDepartment('Carnes e Frango')">🥩 <b>Carnes e Frango</b></button>
+<button class="box" onclick="comingDepartment('Hortifruti')">🥬 <b>Hortifruti</b></button><button class="box" onclick="comingDepartment('Padaria')">🥖 <b>Padaria</b></button>
+<button class="box" onclick="comingDepartment('Leite e Derivados')">🥛 <b>Leite e Derivados</b></button><button class="box" onclick="comingDepartment('Bebidas')">🥤 <b>Bebidas</b></button>
+<button class="box" onclick="comingDepartment('Biscoitos e Lanches')">🍪 <b>Biscoitos e Lanches</b></button><button class="box" onclick="comingDepartment('Frios e Congelados')">🧊 <b>Frios e Congelados</b></button>
+<button class="box" onclick="comingDepartment('Limpeza')">🧹 <b>Limpeza</b></button><button class="box" onclick="comingDepartment('Higiene e Perfumaria')">🧴 <b>Higiene e Perfumaria</b></button>
+<button class="box" onclick="comingDepartment('Bebê')">👶 <b>Bebê</b></button><button class="box" onclick="comingDepartment('Pet')">🐶 <b>Pet</b></button>
+<button class="box" onclick="comingDepartment('Utilidades Domésticas')">🏠 <b>Utilidades Domésticas</b></button><button class="box" onclick="comingDepartment('Churrasco')">🔥 <b>Churrasco</b></button>
+<button class="box" onclick="comingDepartment('Doces e Chocolates')">🍬 <b>Doces e Chocolates</b></button><button class="box" onclick="go('offers')">🏷️ <b>Ofertas</b></button>
+</div></div>
+<div id="subcategoryView" style="display:none"><button class="back" onclick="closeDepartment()">← Todas as seções</button><div class="head"><h2>🍚 Mercearia</h2></div><div class="grid">
+<button class="box" onclick="chooseMarketCategory('Arroz')">🍚 <b>Arroz</b></button><button class="box" onclick="chooseMarketCategory('Feijão')">🫘 <b>Feijão</b></button><button class="box" onclick="chooseMarketCategory('Macarrão')">🍝 <b>Macarrão</b></button><button class="box" onclick="chooseMarketCategory('Açúcar')">🧂 <b>Açúcar</b></button><button class="box" onclick="chooseMarketCategory('Café')">☕ <b>Café</b></button><button class="box" onclick="chooseMarketCategory('Óleos e Azeites')">🫗 <b>Óleos e Azeites</b></button><button class="box" onclick="chooseMarketCategory('Farinhas')">🌾 <b>Farinhas</b></button><button class="box" onclick="chooseMarketCategory('Temperos e Condimentos')">🧂 <b>Temperos e Condimentos</b></button><button class="box" onclick="chooseMarketCategory('Molhos')">🥫 <b>Molhos</b></button><button class="box" onclick="chooseMarketCategory('Enlatados e Conservas')">🥫 <b>Enlatados e Conservas</b></button><button class="box" onclick="chooseMarketCategory('Cereais e Grãos')">🌾 <b>Cereais e Grãos</b></button>
+</div></div></section>
 <section id="products" class="page"><button class="back" onclick="go('categories')">← Voltar</button><div class="head"><h2 id="ptitle">Produtos</h2></div><div class="box" style="margin-bottom:12px"><label style="font-size:13px;font-weight:800">Filtrar por marca</label><select id="brandFilter" onchange="filterBrands()" style="width:100%;margin-top:6px;padding:11px;border:1px solid var(--line);border-radius:10px;background:#fff"><option value="">Todas as marcas</option></select></div><div id="productsGrid" class="grid"></div></section>
 <section id="cart" class="page"><button class="back" onclick="go('home')">← Continuar comprando</button><div class="head"><h2>Meu carrinho</h2></div><div id="cartBox"></div></section>
 <section id="checkout" class="page"><button class="back" onclick="go('cart')">← Carrinho</button><div class="head"><h2>Finalizar pedido</h2></div>
@@ -150,6 +163,10 @@ function adminBrands(){const key='mg_custom_brands';const brands=[...new Set([..
 function adminOrders(){adminContent.innerHTML=orders.length?orders.map(o=>`<div class="box" style="margin:8px 0"><b>#${o.id}</b> — ${o.name}<br><span class="muted">${o.phone} • ${o.address}</span><p>R$ ${money(o.total)} • ${o.payment}</p><span class="status">${o.status}</span></div>`).join(''):'<div class="empty">Nenhum pedido recebido.</div>'}
 function adminStore(){adminContent.innerHTML='<div class="box"><h3>Dados da loja</h3><div class="field"><label>Nome do mercado</label><input value="Mercado Exemplo"></div><div class="field"><label>WhatsApp</label><input placeholder="(88) 99999-9999"></div><div class="field"><label>Taxa de entrega</label><input value="0,00"></div><button class="btn">Salvar alterações</button></div>'}
 render();fillCustomer();renderAccount();
+function openDepartment(){document.getElementById('departmentView').style.display='none';document.getElementById('subcategoryView').style.display='block';scrollTo(0,0)}
+function closeDepartment(){document.getElementById('subcategoryView').style.display='none';document.getElementById('departmentView').style.display='block';scrollTo(0,0)}
+function comingDepartment(n){toast(n+' será organizada na próxima etapa')}
+function chooseMarketCategory(n){toast('Categoria: '+n)}
 </script>
 </body>
 </html>
