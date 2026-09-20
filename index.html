@@ -15,6 +15,34 @@ main{max-width:1100px;margin:auto;padding:18px 15px 90px}.page{display:none}.pag
 .back{background:none;color:var(--blue);font-weight:800;padding:5px 0}.box{padding:16px}.field{margin:10px 0}.field label{font-size:13px;font-weight:800;display:block;margin-bottom:5px}.field input,.field select,.field textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:#fff}.row{display:flex;gap:8px;align-items:center}.between{display:flex;justify-content:space-between;align-items:center}.cartrow{background:#fff;border:1px solid var(--line);padding:12px;border-radius:13px;margin:8px 0;display:flex;gap:10px;align-items:center}.cartrow .grow{flex:1}.qty button{width:32px;height:32px;border-radius:8px;background:#eee}.total{margin-top:12px;padding:15px;border-radius:14px;background:#fff;font-size:20px;font-weight:900;display:flex;justify-content:space-between}.empty{text-align:center;padding:45px 15px;color:var(--muted)}.status{display:inline-block;padding:5px 8px;border-radius:8px;background:#eaf2ff;color:var(--blue);font-size:12px;font-weight:800}
 .adminnav{display:flex;gap:7px;overflow:auto;margin-bottom:14px}.adminnav button{white-space:nowrap;padding:9px 12px;border-radius:9px;background:#e8eef9;color:#1d3557;font-weight:700}.adminnav button.on{background:var(--blue);color:#fff}.table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden}.table th,.table td{padding:10px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}.danger{color:var(--red);font-weight:800}.bottom{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:8px;z-index:60}.bottom button{background:none;color:#555;font-size:11px}.bottom b{display:block;font-size:20px}.bottom .sel{color:var(--blue);font-weight:800}.fab{position:fixed;right:15px;bottom:67px;background:#19b957;color:#fff;border-radius:50%;width:52px;height:52px;font-size:24px;z-index:55}
 @media(min-width:700px){.grid{grid-template-columns:repeat(4,1fr)}.hero{padding:35px}.bottom{display:none}}
+
+/* MARKETGO - visual acolhedor */
+:root{--green:#08783f;--green2:#0aa956;--soft:#f6faf6;--cream:#fffdf6}
+body{background:linear-gradient(180deg,#fbfdf9 0%,#f7faf7 100%);color:#183026}
+.hero{
+  background:
+    linear-gradient(90deg,rgba(6,75,42,.94),rgba(6,75,42,.70)),
+    url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1400&q=80') center/cover;
+  color:#fff;border-radius:22px;padding:30px 22px;min-height:220px;
+  display:flex;flex-direction:column;justify-content:center;box-shadow:0 12px 35px rgba(0,70,35,.14)
+}
+.hero h1{font-size:34px;line-height:1.02;max-width:520px;margin:0 0 8px}
+.hero .heroLead{font-size:18px;max-width:500px;line-height:1.45}
+.calm-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0 24px}
+.calm-strip>div{background:#fff;border:1px solid #e3eee6;border-radius:15px;padding:13px 8px;text-align:center;font-size:12px;box-shadow:0 5px 16px rgba(0,0,0,.035)}
+.market-photo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.market-photo-card{position:relative;min-height:145px;border-radius:18px;overflow:hidden;background:#dfe9e2;box-shadow:0 6px 18px rgba(0,0,0,.08);cursor:pointer}
+.market-photo-card img{position:absolute;width:100%;height:100%;object-fit:cover}
+.market-photo-card:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.72),rgba(0,0,0,.05) 70%)}
+.market-photo-card .pcopy{position:absolute;z-index:2;left:14px;right:12px;bottom:12px;color:white}
+.market-photo-card b{font-size:17px}.market-photo-card small{display:block;margin-top:3px;opacity:.95}
+.welcome-title{margin:22px 0 5px;font-size:24px}.welcome-sub{color:#607268;margin-bottom:14px}
+.product-card-img{width:100%;height:120px;object-fit:contain;background:#fff;border-radius:12px;margin-bottom:8px}
+@media(min-width:760px){.market-photo-grid{grid-template-columns:repeat(4,1fr)}.hero{min-height:300px;padding:42px}.hero h1{font-size:46px}}
+@media(max-width:520px){.calm-strip{grid-template-columns:1fr 1fr}.calm-strip>div:last-child{grid-column:1/-1}.hero h1{font-size:30px}}
+
+
+.cart-float{position:fixed;left:12px;right:12px;bottom:68px;z-index:54;background:#08783f;color:#fff;border:0;border-radius:15px;padding:12px 15px;display:none;align-items:center;justify-content:space-between;box-shadow:0 10px 28px rgba(0,80,40,.25);font-weight:800}.cart-float small{display:block;font-weight:500;opacity:.9}.cart-float strong{font-size:16px}.badge-offer{display:inline-block;background:#fff0d7;color:#9b5600;border-radius:20px;padding:4px 8px;font-size:11px;font-weight:800;margin-bottom:6px}.admin-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.admin-form-grid .wide{grid-column:1/-1}.order-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.order-actions button{padding:8px 10px;border-radius:9px;border:1px solid var(--line);background:#fff;font-weight:700}.order-actions .active{background:#08783f;color:#fff;border-color:#08783f}.stock-low{color:#b06b00;font-weight:800}@media(max-width:520px){.admin-form-grid{grid-template-columns:1fr}.admin-form-grid .wide{grid-column:auto}}
 </style>
 </head>
 <body>
@@ -28,36 +56,36 @@ main{max-width:1100px;margin:auto;padding:18px 15px 90px}.page{display:none}.pag
 <main>
 <section id="home" class="page on">
  <div class="hero">
-  <h1>MERCADO ONLINE</h1>
-  <div>Sua feira, na sua porta.</div>
-  <button class="btn red" onclick="go('categories')" style="margin-top:16px">Começar a comprar</button>
- </div>
- <div class="box" style="margin-top:14px;text-align:center">
-  <b>🛒 Escolha seus produtos &nbsp; → &nbsp; 📦 Finalize o pedido &nbsp; → &nbsp; 🛵 Entregamos para você</b>
-  <div class="muted" style="margin-top:7px">Compra simples, rápida e organizada pelo próprio mercado.</div>
+   <h1>Mais tempo para o que realmente importa 💚</h1>
+   <div class="heroLead">Suas compras do mercado sem sair de casa. Escolha com calma e a equipe prepara tudo para você.</div>
+   <button class="btn red" onclick="go('categories')" style="margin-top:18px;max-width:210px">Começar minhas compras</button>
  </div>
 
-
- <div class="head" style="margin-top:24px">
-  <h2>🔥 Ofertas do dia</h2>
-  <button class="back" onclick="showOfferType('day')">Ver todas</button>
+ <div class="calm-strip">
+   <div>🛵<br><b>Entrega prática</b><br>na sua região</div>
+   <div>🛡️<br><b>Compra tranquila</b><br>simples e organizada</div>
+   <div>💬<br><b>Atendimento</b><br>quando precisar</div>
  </div>
- <div id="dailyOffers" class="grid"></div>
- <div id="dailyEmpty" class="box muted">As ofertas do dia aparecerão aqui quando forem cadastradas.</div>
 
- <div class="head" style="margin-top:24px">
-  <h2>⭐ Ofertas da semana</h2>
-  <button class="back" onclick="showOfferType('week')">Ver todas</button>
+ <h2 class="welcome-title">Escolha do seu jeito</h2>
+ <div class="welcome-sub">Categorias fáceis de encontrar para montar sua compra.</div>
+ <div class="market-photo-grid">
+   <div class="market-photo-card" onclick="openCat('🍚 Mercearia')"><img onerror="this.style.display='none'" src="https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=700&q=80"><div class="pcopy"><b>Mercearia</b><small>Arroz, feijão, grãos e mais</small></div></div>
+   <div class="market-photo-card" onclick="openCat('🥬 Hortifruti')"><img onerror="this.style.display='none'" src="https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=700&q=80"><div class="pcopy"><b>Hortifruti</b><small>Frutas, verduras e legumes</small></div></div>
+   <div class="market-photo-card" onclick="openCat('🥩 Carnes')"><img onerror="this.style.display='none'" src="https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?auto=format&fit=crop&w=700&q=80"><div class="pcopy"><b>Carnes</b><small>Opções para o dia a dia</small></div></div>
+   <div class="market-photo-card" onclick="openCat('🥖 Padaria')"><img onerror="this.style.display='none'" src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=700&q=80"><div class="pcopy"><b>Padaria</b><small>Pães, bolos e lanches</small></div></div>
+   <div class="market-photo-card" onclick="openCat('🥛 Leite e Derivados')"><img onerror="this.style.display='none'" src="https://images.unsplash.com/photo-1628088062854-d1870b4553da?auto=format&fit=crop&w=700&q=80"><div class="pcopy"><b>Laticínios</b><small>Leites, queijos e iogurtes</small></div></div>
+   <div class="market-photo-card" onclick="openCat('🥤 Bebidas')"><img onerror="this.style.display='none'" src="https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=700&q=80"><div class="pcopy"><b>Bebidas</b><small>Para acompanhar suas refeições</small></div></div>
+   <div class="market-photo-card" onclick="openCat('🧹 Limpeza')"><img onerror="this.style.display='none'" src="https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&w=700&q=80"><div class="pcopy"><b>Limpeza</b><small>Casa limpa e organizada</small></div></div>
+   <div class="market-photo-card" onclick="go('categories')"><img onerror="this.style.display='none'" src="https://images.unsplash.com/photo-1607082349566-187342175e2f?auto=format&fit=crop&w=700&q=80"><div class="pcopy"><b>Ver todas</b><small>Explore todas as categorias</small></div></div>
  </div>
- <div id="weeklyOffers" class="grid"></div>
- <div id="weeklyEmpty" class="box muted">As ofertas da semana aparecerão aqui quando forem cadastradas.</div>
 
- <div class="head" style="margin-top:24px">
-  <h2>🛒 Mais vendidos</h2>
-  <button class="back" onclick="showOfferType('best')">Ver produtos</button>
- </div>
- <div id="bestSellers" class="grid"></div>
- <div id="bestEmpty" class="box muted">Os produtos mais vendidos aparecerão aqui.</div>
+ <div class="head" style="margin-top:26px"><h2>🔥 Ofertas do dia</h2></div>
+ <div id="dailyOffers" class="grid"></div><div id="dailyEmpty" class="box muted">Novas ofertas serão exibidas aqui.</div>
+ <div class="head" style="margin-top:24px"><h2>⭐ Ofertas da semana</h2></div>
+ <div id="weeklyOffers" class="grid"></div><div id="weeklyEmpty" class="box muted">As ofertas da semana aparecerão aqui.</div>
+ <div class="head" style="margin-top:24px"><h2>🛒 Mais vendidos</h2></div>
+ <div id="bestSellers" class="grid"></div><div id="bestEmpty" class="box muted">Os favoritos dos clientes aparecerão aqui.</div>
 </section>
 
 <section id="categories" class="page"><button class="back" onclick="go('home')">← Voltar</button><div class="head"><h2>Categorias</h2></div>
@@ -139,6 +167,7 @@ main{max-width:1100px;margin:auto;padding:18px 15px 90px}.page{display:none}.pag
 </main>
 
 <button class="fab" onclick="openWhats()">☏</button>
+<button id="cartFloat" class="cart-float" onclick="go('cart')"><span><strong id="cartFloatItems">0 itens</strong><small>Revisar minha compra</small></span><strong id="cartFloatTotal">R$ 0,00</strong></button>
 <nav class="bottom">
  <button class="sel" onclick="go('home',this)"><b>⌂</b>Início</button><button onclick="go('categories',this)"><b>☰</b>Categorias</button><button onclick="go('orders',this)"><b>📦</b>Pedidos</button><button onclick="go('cart',this)"><b>🛒</b>Carrinho</button><button onclick="go('account',this)"><b>👤</b>Conta</button><button onclick="go('admin',this)"><b>⚙</b>Mercado</button>
 </nav>
@@ -179,7 +208,7 @@ function seedBrand(name,cat){
  }
  return 'Marca do Mercado';
 }
-const products=Object.entries(categories).flatMap(([cat,arr])=>arr.map(x=>({
+let products=Object.entries(categories).flatMap(([cat,arr])=>arr.map(x=>({
  name:x[0],price:+x[1].replace(',', '.'),unit:x[2],emoji:x[3],
  brand:seedBrand(x[0],cat),cat,
  department:cat.replace(/^\S+\s*/, ''),
@@ -187,14 +216,24 @@ const products=Object.entries(categories).flatMap(([cat,arr])=>arr.map(x=>({
 })));
 ['Arroz Branco','Feijão Carioca','Flocão de Milho / Cuscuz','Óleo de Soja'].forEach((n,i)=>{let p=products.find(x=>x.name===n);if(p){p.offerType='day';p.oldPrice=+(p.price+1.5).toFixed(2);if(i<2)p.bestSeller=true}});
 ['Macarrão Espaguete','Açúcar Cristal','Farinha de Trigo','Café Torrado e Moído'].forEach(n=>{let p=products.find(x=>x.name===n);if(p){p.offerType='week';p.oldPrice=+(p.price+1).toFixed(2)}});
+products=products.concat(JSON.parse(localStorage.getItem('mg_custom_products')||'[]'));
 let cart=JSON.parse(localStorage.getItem('mg_cart')||'[]'),orders=JSON.parse(localStorage.getItem('mg_orders')||'[]'),customer=JSON.parse(localStorage.getItem('mg_customer')||'null');
 
 function go(id,btn){document.querySelectorAll('.page').forEach(x=>x.classList.remove('on'));document.getElementById(id).classList.add('on');document.querySelectorAll('.bottom button').forEach(x=>x.classList.remove('sel'));if(btn)btn.classList.add('sel');if(id==='account')renderAccount();renderHomeOffers();scrollTo(0,0)}
 function money(n){return n.toFixed(2).replace('.',',')}
 function save(){localStorage.setItem('mg_cart',JSON.stringify(cart));localStorage.setItem('mg_orders',JSON.stringify(orders));updateCount()}
-function updateCount(){document.getElementById('count').textContent=cart.reduce((s,x)=>s+x.qty,0)}
+function updateCount(){
+ const qty=cart.reduce((s,x)=>s+x.qty,0),total=cart.reduce((s,x)=>s+x.price*x.qty,0);
+ const c=document.getElementById('count');if(c)c.textContent=qty;
+ const f=document.getElementById('cartFloat');if(document.getElementById('cartFloatItems'))cartFloatItems.textContent=qty+' '+(qty===1?'item':'itens');if(document.getElementById('cartFloatTotal'))cartFloatTotal.textContent='R$ '+money(total);if(f)f.style.display=qty?'flex':'none';
+}
 function catCard(c){return `<button class="cat" onclick="openCat(${JSON.stringify(c)})"><div class="ico">${c.split(' ')[0]}</div>${c.substring(c.indexOf(' ')+1)}</button>`}
-function card(p){return `<div class="card"><div class="pic">${p.emoji}</div><h3>${p.name}</h3><div class="muted"><b>${p.brand||"Sem marca"}</b> • ${p.unit}</div><div class="price">R$ ${money(p.price)}</div><button class="add" onclick="add(${JSON.stringify(p.name)})">+ Adicionar</button></div>`}
+function card(p){
+ const img=p.image?`<img class="product-card-img" src="${p.image}" onerror="this.style.display='none'">`:`<div class="pic">${p.emoji||'🛒'}</div>`;
+ const offer=p.oldPrice&&Number(p.oldPrice)>Number(p.price)?`<span class="badge-offer">OFERTA</span><div class="muted" style="text-decoration:line-through">R$ ${money(Number(p.oldPrice))}</div>`:'';
+ const stock=p.stock===0?'<span class="stock-low">Indisponível</span>':(p.stock&&p.stock<=5?`<span class="stock-low">Últimas ${p.stock}</span>`:'');
+ return `<div class="card">${img}${offer}<h3>${p.name}</h3><div class="muted"><b>${p.brand||'Sem marca'}</b> • ${p.unit}</div>${stock}<div class="price">R$ ${money(Number(p.price))}</div><button class="add" ${p.stock===0?'disabled':''} onclick="add(${JSON.stringify(p.name)})">${p.stock===0?'Indisponível':'+ Adicionar'}</button></div>`;
+}
 function render(){
  const hc=document.getElementById('homeCats');
  const cg=document.getElementById('cats');
@@ -206,11 +245,21 @@ function render(){
 }
 function openCat(c){ptitle.textContent=c;setBrandOptions(c);productsGrid.innerHTML=products.filter(p=>p.cat===c).map(card).join('');go('products')}
 function showAll(){ptitle.textContent='Todos os produtos';setBrandOptions('');productsGrid.innerHTML=products.map(card).join('');go('products')}
-function add(name){let p=products.find(x=>x.name===name),i=cart.find(x=>x.name===name);i?i.qty++:cart.push({name:p.name,price:p.price,unit:p.unit,emoji:p.emoji,qty:1});save();toast('Produto adicionado')}
+function add(name){
+ const p=products.find(x=>x.name===name);if(!p)return;const i=cart.find(x=>x.name===name);
+ if(p.stock===0)return toast('Produto indisponível');if(p.stock&&i&&i.qty>=p.stock)return toast('Quantidade máxima disponível');
+ i?i.qty++:cart.push({name:p.name,price:Number(p.price),unit:p.unit,emoji:p.emoji||'🛒',qty:1});save();renderCart();toast('Produto adicionado');
+}
 function change(name,d){let i=cart.find(x=>x.name===name);if(!i)return;i.qty+=d;if(i.qty<1)cart=cart.filter(x=>x.name!==name);save();renderCart()}
 function renderCart(){let b=document.getElementById('cartBox');if(!cart.length){b.innerHTML=`<div class="empty">🛒<br><br>Seu carrinho está vazio.<br><br><button class="btn red" onclick="go('categories')">Começar minhas compras</button></div>`;return}let t=0;b.innerHTML=cart.map(i=>{t+=i.price*i.qty;return `<div class="cartrow"><div style="font-size:30px">${i.emoji}</div><div class="grow"><b>${i.name}</b><br><span class="muted">R$ ${money(i.price)}</span></div><div class="row qty"><button onclick="change(${JSON.stringify(i.name)},-1)">−</button><b>${i.qty}</b><button onclick="change(${JSON.stringify(i.name)},1)">+</button></div></div>`}).join('')+`<div class="total"><span>Total</span><span>R$ ${money(t)}</span></div><br><button class="btn" style="width:100%" onclick="go('checkout')">Continuar</button>`}
 function deliveryAddress(prefix='c'){let bairro=document.getElementById(prefix+'neighborhood').value,rua=document.getElementById(prefix+'street').value.trim(),numero=document.getElementById(prefix+'number').value.trim(),ref=document.getElementById(prefix+'reference').value.trim();return {bairro,rua,numero,ref,address:`${rua}, ${numero} - ${bairro}, Jaguaribe - CE${ref?' • Ref.: '+ref:''}`}}
-function placeOrder(){if(!cart.length)return toast('Carrinho vazio');let n=cname.value.trim(),nickname=cnickname.value.trim(),p=cphone.value.trim(),d=deliveryAddress('c');if(!n||!p||!d.bairro||!d.rua||!d.numero)return toast('Preencha nome, WhatsApp, bairro, rua e número');let total=cart.reduce((s,x)=>s+x.price*x.qty,0);orders.unshift({id:'MG'+Date.now().toString().slice(-6),date:new Date().toLocaleString('pt-BR'),name:n,nickname,phone:p,address:d.address,city:'Jaguaribe - CE',neighborhood:d.bairro,street:d.rua,number:d.numero,reference:d.ref,payment:cpay.value,note:cnote.value,total,items:[...cart],status:'Recebido'});cart=[];save();renderOrders();go('orders');toast('Pedido enviado!')}
+function placeOrder(){
+ if(!cart.length)return toast('Carrinho vazio');const n=cname.value.trim(),nickname=cnickname.value.trim(),p=cphone.value.trim(),d=deliveryAddress('c');
+ if(!n||!p||!d.bairro||!d.rua||!d.numero)return toast('Preencha nome, WhatsApp, bairro, rua e número');
+ const total=cart.reduce((s,x)=>s+x.price*x.qty,0),delivery=document.getElementById('deliveryType')?.value||'Entrega';
+ orders.unshift({id:'MG'+Date.now().toString().slice(-6),date:new Date().toLocaleString('pt-BR'),name:n,nickname,phone:p,address:d.address,city:'Jaguaribe - CE',neighborhood:d.bairro,street:d.rua,number:d.numero,reference:d.ref,payment:cpay.value,note:cnote.value,total,items:[...cart],delivery,status:'Recebido',statusHistory:[{status:'Recebido',date:new Date().toLocaleString('pt-BR')}]});
+ cart=[];save();renderCart();renderOrders();go('orders');toast('Pedido enviado!');
+}
 function normalizePhone(v){return (v||'').replace(/\D/g,'')}
 function isLogged(){return sessionStorage.getItem('mg_logged')==='1'||localStorage.getItem('mg_logged')==='1'}
 function showLogin(){loginBox.style.display='block';registerBox.style.display='none';profileBox.style.display='none'}
@@ -223,15 +272,38 @@ function forgotPassword(){toast('Recuperação online será ativada quando conec
 function editCustomer(){showRegister();apassword.value=customer?.password||''}
 function saveCustomer(){let d=deliveryAddress('a'),name=aname.value.trim(),nickname=anickname.value.trim(),phone=aphone.value.trim(),email=aemail.value.trim(),password=apassword.value;if(!name||!phone||!email||!password||!d.bairro||!d.rua||!d.numero)return toast('Preencha os campos obrigatórios');customer={name,nickname,phone,email,password,city:'Jaguaribe - CE',neighborhood:d.bairro,street:d.rua,number:d.numero,reference:d.ref};localStorage.setItem('mg_customer',JSON.stringify(customer));sessionStorage.setItem('mg_logged','1');fillCustomer();showProfile();toast('Cadastro salvo!')}
 function fillCustomer(){if(!customer)return;[['aname','name'],['anickname','nickname'],['aphone','phone'],['aemail','email'],['aneighborhood','neighborhood'],['astreet','street'],['anumber','number'],['areference','reference'],['cname','name'],['cnickname','nickname'],['cphone','phone'],['cneighborhood','neighborhood'],['cstreet','street'],['cnumber','number'],['creference','reference']].forEach(([id,k])=>{let e=document.getElementById(id);if(e)e.value=customer[k]||''})}
-function renderOrders(){let b=ordersBox;if(!orders.length){b.innerHTML='<div class="empty">📦<br><br>Nenhum pedido ainda.</div>';return}b.innerHTML=orders.map(o=>`<div class="order" style="padding:15px;margin:8px 0"><b>Pedido #${o.id}</b><br><span class="muted">${o.date}</span>${o.nickname?`<br><span class="muted">Cliente: ${o.name} • Mais conhecido como: ${o.nickname}</span>`:`<br><span class="muted">Cliente: ${o.name}</span>`}<p><span class="status">${o.status}</span></p><b>R$ ${money(o.total)}</b><br><span class="muted">${o.payment} • ${o.address}</span></div>`).join('')}
-function getBrands(){return [...new Set(products.map(p=>p.brand))].sort((a,b)=>a.localeCompare(b,'pt-BR'))} function setBrandOptions(cat){const el=document.getElementById('brandFilter');if(!el)return;const list=cat?products.filter(p=>p.cat===cat):products;el.innerHTML='<option value="">Todas as marcas</option>'+[...new Set(list.map(p=>p.brand))].sort((a,b)=>a.localeCompare(b,'pt-BR')).map(b=>`<option>${b}</option>`).join('')} function filterBrands(){const brand=document.getElementById('brandFilter').value;let list=products;const cat=ptitle.textContent;if(cat&&cat!=='Todos os produtos')list=list.filter(p=>p.cat===cat);if(brand)list=list.filter(p=>p.brand===brand);productsGrid.innerHTML=list.length?list.map(card).join(''):'<div class="empty">Nenhum produto dessa marca.</div>'} function doSearch(q){q=q.toLowerCase().trim();if(!q)return;let r=products.filter(p=>(p.name+' '+p.brand+' '+p.cat).toLowerCase().includes(q));searchGrid.innerHTML=r.length?r.map(card).join(''):'<div class="empty">Nenhum produto encontrado.</div>';go('searchPage')}
+function renderOrders(){
+ const b=ordersBox;if(!orders.length){b.innerHTML='<div class="empty">📦<br><br>Nenhum pedido ainda.</div>';return}
+ b.innerHTML=orders.map(o=>`<div class="order" style="padding:15px;margin:8px 0"><div class="between"><b>Pedido #${o.id}</b><span class="status">${o.status}</span></div><span class="muted">${o.date}</span><p>${o.items.map(i=>`${i.qty}x ${i.name}`).join('<br>')}</p><b>R$ ${money(o.total)}</b><br><span class="muted">${o.delivery||'Entrega'} • ${o.payment}<br>${o.address}</span><br><button class="btn light" style="margin-top:10px" onclick="repeatOrder('${o.id}')">🔁 Comprar novamente</button></div>`).join('');
+}
+function repeatOrder(id){const o=orders.find(x=>x.id===id);if(!o)return;cart=o.items.map(i=>({...i}));save();renderCart();go('cart');toast('Itens adicionados ao carrinho');}
+function getBrands(){return [...new Set(products.map(p=>p.brand))].sort((a,b)=>a.localeCompare(b,'pt-BR'))} function setBrandOptions(cat){const el=document.getElementById('brandFilter');if(!el)return;const list=cat?products.filter(p=>p.cat===cat):products;el.innerHTML='<option value="">Todas as marcas</option>'+[...new Set(list.map(p=>p.brand))].sort((a,b)=>a.localeCompare(b,'pt-BR')).map(b=>`<option>${b}</option>`).join('')} function filterBrands(){const brand=document.getElementById('brandFilter').value;let list=products;const cat=ptitle.textContent;if(cat&&cat!=='Todos os produtos')list=list.filter(p=>p.cat===cat);if(brand)list=list.filter(p=>p.brand===brand);productsGrid.innerHTML=list.length?list.map(card).join(''):'<div class="empty">Nenhum produto dessa marca.</div>'} function doSearch(q){q=q.toLowerCase().trim();if(!q){go('home');return;}let r=products.filter(p=>(p.name+' '+p.brand+' '+p.cat).toLowerCase().includes(q));searchGrid.innerHTML=r.length?r.map(card).join(''):'<div class="empty">Nenhum produto encontrado.</div>';go('searchPage')}
 function openWhats(){window.open('https://wa.me/?text='+encodeURIComponent('Olá! Quero fazer um pedido pelo Mercado Online.'),'_blank')}
 function toast(t){let x=document.createElement('div');x.textContent=t;x.style='position:fixed;left:50%;bottom:85px;transform:translateX(-50%);background:#111;color:#fff;padding:12px 17px;border-radius:10px;z-index:100;font-weight:700';document.body.appendChild(x);setTimeout(()=>x.remove(),1800)}
 
-function adminTab(tab){document.querySelectorAll('.adminnav button').forEach(x=>x.classList.remove('on'));event.target.classList.add('on');if(tab==='dashboard')adminDashboard();if(tab==='products')adminProducts();if(tab==='orders')adminOrders();if(tab==='store')adminStore()}
+function adminTab(tab){
+ document.querySelectorAll('.adminnav button').forEach(x=>x.classList.remove('on'));const labels={dashboard:'Resumo',products:'Produtos',orders:'Pedidos',store:'Minha loja'};[...document.querySelectorAll('.adminnav button')].find(x=>x.textContent.trim()===labels[tab])?.classList.add('on');
+ if(tab==='dashboard')adminDashboard();if(tab==='products')adminProducts();if(tab==='orders')adminOrders();if(tab==='store')adminStore();
+}
 function adminDashboard(){if(!document.getElementById('adminContent'))return;adminContent.innerHTML=`<div class="grid"><div class="box"><b>Pedidos</b><h2>${orders.length}</h2></div><div class="box"><b>Produtos</b><h2>${products.length}</h2></div><div class="box"><b>Carrinho</b><h2>${cart.reduce((s,x)=>s+x.qty,0)}</h2></div><div class="box"><b>Marca</b><h2>MARKETGO</h2></div></div><br><div class="box"><b>Fluxo da loja</b><p>Cliente compra → pedido chega ao mercado → mercado separa → entrega ao cliente.</p><button class="btn green" onclick="go('orders')">Ver pedidos</button></div>`}
-function adminBrands(){const key='mg_custom_brands';const brands=[...new Set([...getBrands(),...(JSON.parse(localStorage.getItem(key)||'[]'))])].sort((a,b)=>a.localeCompare(b,'pt-BR'));adminContent.innerHTML=`<div class="box"><div class="between"><b>Cadastro de marcas</b><button class="btn" onclick="newBrand()">+ Nova marca</button></div><p class="muted">Cadastre marcas para usar no catálogo.</p>${brands.map(b=>`<div class="between" style="padding:10px 0;border-bottom:1px solid var(--line)"><span>🏷️ ${b}</span><span class="muted">${products.filter(p=>p.brand===b).length} produtos</span></div>`).join('')}</div>`} function newBrand(){const n=prompt('Nome da nova marca:');if(!n||!n.trim())return;const key='mg_custom_brands',a=JSON.parse(localStorage.getItem(key)||'[]');if(!a.includes(n.trim()))a.push(n.trim());localStorage.setItem(key,JSON.stringify(a));toast('Marca cadastrada');adminBrands()} function adminProducts(){adminContent.innerHTML='<div class="box"><div class="between"><b>Catálogo</b><div class="row"><button class="btn light" onclick="adminBrands()">🏷️ Marcas</button><button class="btn">+ Novo produto</button></div></div><br><table class="table"><tr><th>Produto</th><th>Marca</th><th>Categoria</th><th>Preço</th></tr>'+products.map(p=>`<tr><td>${p.emoji} ${p.name}</td><td>${p.brand}</td><td>${p.cat}</td><td>R$ ${money(p.price)}</td></tr>`).join('')+'</table></div>'}
-function adminOrders(){adminContent.innerHTML=orders.length?orders.map(o=>`<div class="box" style="margin:8px 0"><b>#${o.id}</b> — ${o.name}<br><span class="muted">${o.phone} • ${o.address}</span><p>R$ ${money(o.total)} • ${o.payment}</p><span class="status">${o.status}</span></div>`).join(''):'<div class="empty">Nenhum pedido recebido.</div>'}
+function adminBrands(){const key='mg_custom_brands';const brands=[...new Set([...getBrands(),...(JSON.parse(localStorage.getItem(key)||'[]'))])].sort((a,b)=>a.localeCompare(b,'pt-BR'));adminContent.innerHTML=`<div class="box"><div class="between"><b>Cadastro de marcas</b><button class="btn" onclick="newBrand()">+ Nova marca</button></div><p class="muted">Cadastre marcas para usar no catálogo.</p>${brands.map(b=>`<div class="between" style="padding:10px 0;border-bottom:1px solid var(--line)"><span>🏷️ ${b}</span><span class="muted">${products.filter(p=>p.brand===b).length} produtos</span></div>`).join('')}</div>`} function newBrand(){const n=prompt('Nome da nova marca:');if(!n||!n.trim())return;const key='mg_custom_brands',a=JSON.parse(localStorage.getItem(key)||'[]');if(!a.includes(n.trim()))a.push(n.trim());localStorage.setItem(key,JSON.stringify(a));toast('Marca cadastrada');adminBrands()} function adminProducts(){
+ adminContent.innerHTML=`<div class="box"><div class="between"><b>Catálogo de produtos</b><div class="row"><button class="btn light" onclick="adminBrands()">🏷️ Marcas</button><button class="btn" onclick="showProductForm()">+ Novo produto</button></div></div><p class="muted">Cadastre produtos com categoria, preço, estoque e destaque.</p></div><div id="productFormBox"></div><br><div class="box"><table class="table"><tr><th>Produto</th><th>Categoria</th><th>Preço</th><th>Estoque</th></tr>${products.map(p=>`<tr><td>${p.emoji||'🛒'} ${p.name}<br><span class="muted">${p.brand||''}</span></td><td>${p.subcategory||p.cat}</td><td>R$ ${money(Number(p.price))}</td><td>${p.stock??'—'}</td></tr>`).join('')}</table></div>`;
+}
+function showProductForm(){
+ const box=document.getElementById('productFormBox');if(!box)return;const deps=Object.keys(MARKET_SECTIONS);
+ box.innerHTML=`<div class="box" style="margin-top:12px"><h3>Novo produto</h3><div class="admin-form-grid"><div class="field"><label>Nome</label><input id="npName"></div><div class="field"><label>Marca</label><input id="npBrand"></div><div class="field"><label>Departamento</label><select id="npDep" onchange="fillAdminSubcats()">${deps.map(x=>`<option>${x}</option>`).join('')}</select></div><div class="field"><label>Categoria</label><select id="npSub"></select></div><div class="field"><label>Preço</label><input id="npPrice" inputmode="decimal" placeholder="6,99"></div><div class="field"><label>Preço anterior</label><input id="npOld" inputmode="decimal"></div><div class="field"><label>Peso / unidade</label><input id="npUnit" placeholder="1kg"></div><div class="field"><label>Estoque</label><input id="npStock" type="number" min="0"></div><div class="field"><label>Destaque</label><select id="npOffer"><option value="">Produto normal</option><option value="day">Oferta do dia</option><option value="week">Oferta da semana</option><option value="best">Mais vendido</option></select></div><div class="field"><label>Emoji</label><input id="npEmoji" value="🛒"></div><div class="field wide"><label>Imagem do produto (URL opcional)</label><input id="npImage" placeholder="https://..."></div></div><button class="btn green" onclick="saveNewProduct()">Salvar produto</button></div>`;fillAdminSubcats();
+}
+function fillAdminSubcats(){const dep=document.getElementById('npDep')?.value,sub=document.getElementById('npSub');if(sub)sub.innerHTML=(MARKET_SECTIONS[dep]||[]).map(x=>`<option>${x}</option>`).join('');}
+function saveNewProduct(){
+ const name=npName.value.trim(),price=Number(npPrice.value.replace(',','.')),dep=npDep.value,sub=npSub.value;if(!name||!price||!dep||!sub)return toast('Preencha os campos principais');
+ const p={name,brand:npBrand.value.trim()||'Sem marca',price,oldPrice:Number(npOld.value.replace(',','.'))||0,unit:npUnit.value.trim()||'un.',stock:npStock.value===''?null:Number(npStock.value),emoji:npEmoji.value||'🛒',image:npImage.value.trim(),department:dep,subcategory:sub,cat:Object.keys(categories).find(k=>k.includes(dep))||'🍚 Mercearia',offerType:npOffer.value==='best'?'':npOffer.value,bestSeller:npOffer.value==='best'};
+ const a=JSON.parse(localStorage.getItem('mg_custom_products')||'[]');a.push(p);localStorage.setItem('mg_custom_products',JSON.stringify(a));products.push(p);toast('Produto cadastrado');adminProducts();renderHomeOffers();
+}
+function adminOrders(){
+ const sts=['Recebido','Separando','Pronto','Saiu para entrega','Entregue'];
+ adminContent.innerHTML=orders.length?orders.map(o=>`<div class="box" style="margin:8px 0"><div class="between"><b>#${o.id} — ${o.name}</b><span class="status">${o.status}</span></div><span class="muted">${o.phone}<br>${o.address}</span><p>${o.items.map(i=>`${i.qty}x ${i.name}`).join('<br>')}</p><b>R$ ${money(o.total)}</b> • ${o.payment} • ${o.delivery||'Entrega'}${o.note?`<p class="muted">Obs.: ${o.note}</p>`:''}<div class="order-actions">${sts.map(s=>`<button class="${o.status===s?'active':''}" onclick="setOrderStatus('${o.id}','${s}')">${s}</button>`).join('')}</div></div>`).join(''):'<div class="empty">Nenhum pedido recebido.</div>';
+}
+function setOrderStatus(id,status){const o=orders.find(x=>x.id===id);if(!o)return;o.status=status;o.statusHistory=o.statusHistory||[];o.statusHistory.push({status,date:new Date().toLocaleString('pt-BR')});save();adminOrders();renderOrders();toast('Pedido atualizado');}
 function adminStore(){adminContent.innerHTML='<div class="box"><h3>Dados da loja</h3><div class="field"><label>Nome do mercado</label><input value="Mercado Exemplo"></div><div class="field"><label>WhatsApp</label><input placeholder="(88) 99999-9999"></div><div class="field"><label>Taxa de entrega</label><input value="0,00"></div><button class="btn">Salvar alterações</button></div>'}
 render();fillCustomer();renderAccount();
 const MARKET_SECTIONS={
