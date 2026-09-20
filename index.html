@@ -241,12 +241,30 @@ function openDepartment(name){
  scrollTo(0,0)
 }
 function closeDepartment(){document.getElementById('subcategoryView').style.display='none';document.getElementById('departmentView').style.display='block';scrollTo(0,0)}
+function productSubcategory(p){
+ const n=(p.name||'').toLowerCase();
+ const rules=[
+ ['Arroz',/arroz/],['Feijão',/feijão/],['Macarrão',/macarrão/],['Açúcar',/açúcar/],['Café',/café/],
+ ['Óleos e Azeites',/óleo|azeite/],['Farinhas',/farinha|fubá|polvilho|tapioca/],
+ ['Temperos e Condimentos',/sal refinado|tempero|condimento/],['Molhos',/molho|ketchup|maionese|mostarda/],
+ ['Enlatados e Conservas',/enlat|conserva|sardinha|atum/],
+ ['Cereais e Grãos',/aveia|lentilha|ervilha|grão-de-bico|soja|quinoa|linhaça|chia|gergelim|amendoim|canjica|milho|flocão|cuscuz/],
+ ['Carne bovina',/carne bovina|bife|patinho|acém|coxão/],['Carne suína',/suín|porco/],['Frango',/frango|coxa|sobrecoxa|peito de frango/],
+ ['Refrigerantes',/refrigerante|coca|guaraná|fanta|sprite/],['Água',/água mineral/],['Sucos',/suco/],
+ ['Detergente',/detergente/],['Sabão em pó e líquido',/sabão/],['Desinfetante',/desinfetante/],['Água sanitária',/água sanitária/],
+ ['Leites',/^leite| leite/],['Queijos',/queijo/],['Iogurtes',/iogurte/],
+ ['Pães',/pão|pães/],['Bolos',/bolo/],['Frutas',/banana|maçã|laranja|mamão|melancia|uva/],
+ ['Verduras',/alface|couve|coentro/],['Legumes',/tomate|cenoura|beterraba|abóbora|chuchu/]
+ ];
+ for(const [sub,re] of rules) if(re.test(n)) return sub;
+ return '';
+}
 function chooseMarketCategory(n){
- const q=document.getElementById('search');
- if(q)q.value=n;
- go('home');
- if(typeof render==='function')render();
- toast('Mostrando: '+n)
+ const matched=products.filter(p=>productSubcategory(p)===n);
+ ptitle.textContent=n;
+ setBrandOptions('');
+ productsGrid.innerHTML=matched.length?matched.map(card).join(''):`<div class="empty" style="grid-column:1/-1">📦<br><br>Ainda não há produtos cadastrados em <b>${n}</b>.</div>`;
+ go('products');
 }
 
 function homeProductCard(p){
@@ -254,11 +272,11 @@ function homeProductCard(p){
  const old=Number(p.oldPrice||p.precoAntigo||0);
  const name=p.name||p.nome||'Produto';
  return `<div class="box" style="text-align:left">
-   ${p.image||p.img?`<img src="${p.image||p.img}" alt="${name}" style="width:100%;height:110px;object-fit:contain;border-radius:10px">`:''}
+   ${p.image||p.img?`<img src="${p.image||p.img}" alt="${name}" style="width:100%;height:110px;object-fit:contain;border-radius:10px">`:`<div style="font-size:42px;text-align:center;margin-bottom:8px">${p.emoji||'🛒'}</div>`}
    <b>${name}</b>
    ${old>price?`<div class="muted" style="text-decoration:line-through">R$ ${old.toFixed(2).replace('.',',')}</div>`:''}
    ${price?`<div style="font-size:20px;font-weight:800;margin:6px 0">R$ ${price.toFixed(2).replace('.',',')}</div>`:''}
-   ${p.id!==undefined?`<button class="btn" style="width:100%" onclick="addCart(${JSON.stringify(p.id)})">Adicionar</button>`:''}
+   <button class="btn" style="width:100%" onclick='add(${JSON.stringify(p.name)})'>Adicionar</button>
  </div>`;
 }
 function renderHomeOffers(){
