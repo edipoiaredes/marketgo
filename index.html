@@ -48,6 +48,43 @@ body{background:linear-gradient(180deg,#fbfdf9 0%,#f7faf7 100%);color:#183026}
 .brand-wrap{display:flex;flex-direction:column;line-height:1}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+/* Correção de navegação fixa — Minhas Compras */
+nav.bottom{
+  position:fixed !important;
+  left:50% !important;
+  transform:translateX(-50%) !important;
+  bottom:0 !important;
+  width:min(100%, 860px) !important;
+  z-index:9999 !important;
+  display:grid !important;
+  grid-template-columns:repeat(5,1fr) !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  background:#fff !important;
+  border-top:1px solid #dfe5df !important;
+  box-shadow:0 -4px 18px rgba(0,0,0,.10) !important;
+  padding:6px max(8px,env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left)) !important;
+}
+nav.bottom button{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  min-height:52px !important;
+  border:0 !important;
+  background:transparent !important;
+  font-size:11px !important;
+  cursor:pointer !important;
+}
+nav.bottom button b{font-size:19px !important;line-height:22px !important}
+body{padding-bottom:82px !important}
+@media (min-width:900px){
+  nav.bottom{border-radius:16px 16px 0 0 !important;}
+}
+</style>
+
 </head>
 <body>
 <div id="supabaseStatus" style="position:fixed;left:10px;bottom:76px;z-index:90;background:white;border:1px solid #e3e8e4;border-radius:999px;padding:5px 9px;font-size:11px;box-shadow:0 2px 10px #00000012">☁️ Conectando ao banco...</div>
@@ -852,6 +889,12 @@ window.adminTab = function(tab) {
   return mcAdminTabOriginal(tab);
 };
 </script>
+
+
+<button id="desktopMercadoShortcut" onclick="openAdmin(this)"
+ style="position:fixed;right:18px;bottom:88px;z-index:9998;border:0;border-radius:999px;padding:10px 14px;background:#16803a;color:white;font-weight:700;box-shadow:0 4px 16px #0003;cursor:pointer">
+ ⚙ Mercado
+</button>
 
 </body>
 </html>
