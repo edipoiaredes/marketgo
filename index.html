@@ -494,6 +494,8 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 const MINHAS_COMPRAS_STORE_SLUG = 'mercado-teste';
 let supabaseStore = null;
 let supabaseProducts = [];
+let supabaseCategories = [];
+let localProductsBackup = null;
 
 async function carregarCatalogoSupabase() {
   const badge = document.getElementById('supabaseStatus');
@@ -507,6 +509,15 @@ async function carregarCatalogoSupabase() {
     if (lojaErro) throw lojaErro;
     supabaseStore = loja;
 
+    const { data: cats, error: catsErro } = await sb
+      .from('categorias')
+      .select('id,nome,descricao,imagem_url,ordem')
+      .eq('mercado_id', loja.id)
+      .eq('ativo', true)
+      .order('ordem');
+    if (catsErro) throw catsErro;
+    supabaseCategories = cats || [];
+
     const { data: lista, error: produtosErro } = await sb
       .from('produtos')
       .select('id,nome,marca,preco,preco_anterior,estoque,unidade,imagem_url,oferta_dia,oferta_semana,mais_vendido,categoria_id')
@@ -516,9 +527,36 @@ async function carregarCatalogoSupabase() {
     if (produtosErro) throw produtosErro;
 
     supabaseProducts = lista || [];
-    console.info('Minhas Compras: Supabase conectado.', {mercado: loja.nome, produtos: supabaseProducts.length});
+
+    const catMap = Object.fromEntries(supabaseCategories.map(c => [c.id, c.nome]));
+    const onlineProducts = supabaseProducts.map(p => ({
+      id: p.id,
+      name: p.nome,
+      brand: p.marca || 'Sem marca',
+      price: Number(p.preco || 0),
+      old: p.preco_anterior == null ? null : Number(p.preco_anterior),
+      stock: Number(p.estoque || 0),
+      unit: p.unidade || 'UN',
+      image: p.imagem_url || '',
+      emoji: '🛒',
+      cat: catMap[p.categoria_id] || 'Outros',
+      department: catMap[p.categoria_id] || 'Outros',
+      subcategory: catMap[p.categoria_id] || 'Outros',
+      offerType: p.oferta_dia ? 'day' : (p.oferta_semana ? 'week' : ''),
+      bestSeller: !!p.mais_vendido,
+      source: 'supabase'
+    }));
+
+    if (onlineProducts.length) {
+      if (localProductsBackup === null) localProductsBackup = [...products];
+      products = onlineProducts;
+      if (typeof renderHomeOffers === 'function') renderHomeOffers();
+      if (typeof render === 'function') render();
+    }
+
+    console.info('Minhas Compras: catálogo online carregado.', {mercado: loja.nome, produtos: supabaseProducts.length});
     if (badge) {
-      badge.textContent = `☁️ Banco online conectado • ${supabaseProducts.length} produtos`;
+      badge.textContent = `☁️ Catálogo online • ${supabaseProducts.length} produtos`;
       badge.style.color = '#16803a';
     }
   } catch (erro) {
