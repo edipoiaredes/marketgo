@@ -234,7 +234,19 @@ body{padding-bottom:82px !important}
  </div>
  <div id="adminPanelBox" style="display:none">
    <div class="between box" style="margin-bottom:10px"><span id="adminIdentity">Administrador</span><button class="btn light" onclick="logoutAdminSupabase()">Sair</button></div>
-   <div class="adminnav"><button onclick="adminTab('dashboard')" class="on">Resumo</button><button onclick="adminTab('products')">Produtos</button><button onclick="adminTab('orders')">Pedidos</button><button onclick="adminTab('store')">Minha loja</button></div>
+   <div class="adminnav" style="overflow-x:auto;white-space:nowrap">
+<button onclick="adminTab('dashboard')" class="on">Resumo</button>
+<button onclick="adminTab('products')">Produtos</button>
+<button onclick="adminTab('categories')">Categorias</button>
+<button onclick="adminTab('brands')">Marcas</button>
+<button onclick="adminTab('stock')">Estoque</button>
+<button onclick="adminTab('promos')">Ofertas</button>
+<button onclick="adminTab('coupons')">Cupons</button>
+<button onclick="adminTab('orders')">Pedidos</button>
+<button onclick="adminTab('delivery')">Entrega</button>
+<button onclick="adminTab('team')">Equipe</button>
+<button onclick="adminTab('store')">Configurações</button>
+</div>
    <div id="adminContent"></div>
  </div>
 </section>
@@ -895,6 +907,116 @@ window.adminTab = function(tab) {
  style="position:fixed;right:18px;bottom:88px;z-index:9998;border:0;border-radius:999px;padding:10px 14px;background:#16803a;color:white;font-weight:700;box-shadow:0 4px 16px #0003;cursor:pointer">
  ⚙ Mercado
 </button>
+
+
+<script>
+/* ===== PAINEL SUPABASE EXPANDIDO ===== */
+let mcMarcasOnline=[];
+
+async function mcMid(){return adminMembership?.mercado_id || supabaseStore?.id}
+async function mcQuery(table, select='*'){
+ const mid=await mcMid(); if(!mid) throw new Error('Mercado não identificado');
+ return sb.from(table).select(select).eq('mercado_id',mid);
+}
+function mcCard(t,n,s=''){return `<div class="box"><b>${t}</b><h2>${n}</h2><small class="muted">${s}</small></div>`}
+
+async function mcDashboardOnline(){
+ const box=document.getElementById('adminContent'); box.innerHTML='<div class="box">Carregando resumo...</div>';
+ try{
+  const mid=await mcMid();
+  const [p,c,m,o]=await Promise.all([
+   sb.from('produtos').select('id',{count:'exact',head:true}).eq('mercado_id',mid),
+   sb.from('categorias').select('id',{count:'exact',head:true}).eq('mercado_id',mid),
+   sb.from('marcas').select('id',{count:'exact',head:true}).eq('mercado_id',mid),
+   sb.from('pedidos').select('id',{count:'exact',head:true}).eq('mercado_id',mid)
+  ]);
+  box.innerHTML=`<div class="grid">${mcCard('Produtos',p.count||0,'catálogo')}${mcCard('Categorias',c.count||0,'inclui subcategorias')}${mcCard('Marcas',m.count||0,'cadastradas')}${mcCard('Pedidos',o.count||0,'no banco')}</div>
+  <br><div class="box"><b>Painel conectado ao Supabase</b><p class="muted">Use as abas acima para administrar o mercado.</p></div>`;
+ }catch(e){box.innerHTML=`<div class="box">⚠️ ${mcEsc(e.message)}</div>`}
+}
+
+async function mcCategoriasPainel(){
+ const box=adminContent; box.innerHTML='<div class="box">Carregando categorias...</div>';
+ const mid=await mcMid(); const {data,error}=await sb.from('categorias').select('id,nome,categoria_pai_id,ativo,ordem').eq('mercado_id',mid).order('ordem').order('nome');
+ if(error){box.innerHTML=`<div class="box">⚠️ ${mcEsc(error.message)}</div>`;return}
+ const parents=(data||[]).filter(x=>!x.categoria_pai_id);
+ box.innerHTML=`<div class="between"><h3>Categorias e subcategorias</h3><button class="btn green" onclick="mcNovaCategoria()">+ Nova categoria</button></div>
+ ${parents.map(p=>`<div class="box"><b>${mcEsc(p.nome)}</b>${(data||[]).filter(x=>x.categoria_pai_id===p.id).map(s=>`<div style="padding:7px 0 0 15px">↳ ${mcEsc(s.nome)}</div>`).join('')}</div>`).join('')}`;
+}
+async function mcNovaCategoria(){
+ const nome=prompt('Nome da categoria:'); if(!nome?.trim())return;
+ const mid=await mcMid(); const {error}=await sb.from('categorias').insert({mercado_id:mid,nome:nome.trim(),ativo:true});
+ if(error)alert(error.message); else {toast('Categoria cadastrada');mcCategoriasPainel()}
+}
+
+async function mcMarcasPainel(){
+ const box=adminContent,mid=await mcMid(); const {data,error}=await sb.from('marcas').select('id,nome,ativo').eq('mercado_id',mid).order('nome');
+ if(error){box.innerHTML=`<div class="box">⚠️ ${mcEsc(error.message)}</div>`;return}
+ mcMarcasOnline=data||[];
+ box.innerHTML=`<div class="between"><div><h3 style="margin:0">Marcas</h3><small class="muted">${data.length} cadastradas</small></div><button class="btn green" onclick="mcNovaMarcaPainel()">+ Nova marca</button></div>
+ <div class="box">${data.map(m=>`<div style="padding:9px;border-bottom:1px solid #eee">🏷️ ${mcEsc(m.nome)}</div>`).join('')}</div>`;
+}
+async function mcNovaMarcaPainel(){
+ const nome=prompt('Nome da nova marca:');if(!nome?.trim())return;
+ const mid=await mcMid();const {error}=await sb.from('marcas').insert({mercado_id:mid,nome:nome.trim()});
+ if(error)alert(error.code==='23505'?'Essa marca já existe.':error.message);else{toast('Marca cadastrada');mcMarcasPainel()}
+}
+
+async function mcEstoquePainel(){
+ const mid=await mcMid(); const {data,error}=await sb.from('produtos').select('id,nome,estoque,estoque_minimo,unidade,ativo').eq('mercado_id',mid).order('nome');
+ if(error){adminContent.innerHTML=`<div class="box">⚠️ ${mcEsc(error.message)}</div>`;return}
+ adminContent.innerHTML=`<h3>Estoque</h3><div class="box"><table class="table"><tr><th>Produto</th><th>Atual</th><th>Mínimo</th></tr>${data.map(p=>`<tr><td>${mcEsc(p.nome)}</td><td>${p.estoque} ${mcEsc(p.unidade||'UN')}</td><td>${p.estoque_minimo||0}</td></tr>`).join('')}</table></div>`;
+}
+async function mcPromosPainel(){
+ const mid=await mcMid();const {data,error}=await sb.from('promocoes').select('*').eq('mercado_id',mid).order('criado_em',{ascending:false});
+ if(error){adminContent.innerHTML=`<div class="box">⚠️ ${mcEsc(error.message)}</div>`;return}
+ adminContent.innerHTML=`<div class="between"><h3>Ofertas e promoções</h3><button class="btn green" onclick="mcNovaPromo()">+ Nova</button></div>${data.length?data.map(x=>`<div class="box"><b>${mcEsc(x.nome)}</b><br><small>${mcEsc(x.desconto_tipo)} • ${x.desconto_valor} ${x.ativo?'• ativa':'• inativa'}</small></div>`).join(''):'<div class="box">Nenhuma promoção cadastrada.</div>'}`;
+}
+async function mcNovaPromo(){
+ const nome=prompt('Nome da promoção:');if(!nome?.trim())return; const valor=prompt('Percentual de desconto (ex.: 10):','10'); if(valor===null)return;
+ const mid=await mcMid();const {error}=await sb.from('promocoes').insert({mercado_id:mid,nome:nome.trim(),tipo:'carrinho',desconto_tipo:'percentual',desconto_valor:Number(String(valor).replace(',','.'))||0,ativo:true});
+ if(error)alert(error.message);else{toast('Promoção criada');mcPromosPainel()}
+}
+async function mcCuponsPainel(){
+ const mid=await mcMid();const {data,error}=await sb.from('cupons').select('*').eq('mercado_id',mid).order('criado_em',{ascending:false});
+ if(error){adminContent.innerHTML=`<div class="box">⚠️ ${mcEsc(error.message)}</div>`;return}
+ adminContent.innerHTML=`<div class="between"><h3>Cupons</h3><button class="btn green" onclick="mcNovoCupom()">+ Novo</button></div>${data.length?data.map(x=>`<div class="box"><b>${mcEsc(x.codigo)}</b> — ${mcEsc(x.tipo)} ${x.valor||''}<br><small>${x.usos_realizados||0} usos</small></div>`).join(''):'<div class="box">Nenhum cupom cadastrado.</div>'}`;
+}
+async function mcNovoCupom(){
+ const codigo=prompt('Código do cupom (ex.: BEMVINDO10):');if(!codigo?.trim())return; const valor=prompt('Desconto percentual:','10');if(valor===null)return;
+ const mid=await mcMid();const {error}=await sb.from('cupons').insert({mercado_id:mid,codigo:codigo.trim().toUpperCase(),tipo:'percentual',valor:Number(String(valor).replace(',','.'))||0,ativo:true});
+ if(error)alert(error.message);else{toast('Cupom criado');mcCuponsPainel()}
+}
+async function mcEntregaPainel(){
+ const mid=await mcMid();
+ const [cfg,z,h]=await Promise.all([
+  sb.from('configuracoes_entrega').select('*').eq('mercado_id',mid).maybeSingle(),
+  sb.from('zonas_entrega').select('*').eq('mercado_id',mid).order('nome'),
+  sb.from('horarios_mercado').select('*').eq('mercado_id',mid).order('dia_semana')
+ ]);
+ adminContent.innerHTML=`<h3>Entrega e horários</h3><div class="box"><b>Regras atuais</b><p>Até ${cfg.data?.raio_proximo_km??3} km: ${mcMoney(cfg.data?.taxa_proximo??4.99)}<br>Acima: ${mcMoney(cfg.data?.taxa_distante??6.99)}<br>Frete grátis acima de ${mcMoney(cfg.data?.frete_gratis_acima??150)}<br>Prioridade: +${mcMoney(cfg.data?.adicional_prioridade??6.99)}</p></div>
+ <div class="box"><b>Horários</b>${(h.data||[]).map(x=>`<div>Dia ${x.dia_semana}: ${x.fechado?'Fechado':`${x.abre?.slice(0,5)}–${x.fecha?.slice(0,5)}`}</div>`).join('')}</div>
+ <div class="box"><b>Zonas de entrega</b><p>${(z.data||[]).length?z.data.map(x=>mcEsc(x.nome)).join(', '):'Nenhuma zona específica cadastrada; regras por distância continuam válidas.'}</p></div>`;
+}
+async function mcEquipePainel(){
+ const mid=await mcMid();const {data,error}=await sb.from('usuarios_mercados').select('nome,funcao,ativo,pode_produtos,pode_pedidos,pode_estoque,pode_configuracoes').eq('mercado_id',mid);
+ if(error){adminContent.innerHTML=`<div class="box">⚠️ ${mcEsc(error.message)}</div>`;return}
+ adminContent.innerHTML=`<h3>Equipe</h3>${data.map(u=>`<div class="box"><b>👤 ${mcEsc(u.nome||'Usuário')}</b><br><small>${mcEsc(u.funcao)} • ${u.ativo?'ativo':'inativo'}</small></div>`).join('')}<div class="box muted">A criação segura de novos usuários será feita por convite/autenticação, sem compartilhar senhas.</div>`;
+}
+async function mcConfigPainel(){
+ const mid=await mcMid();const [m,c]=await Promise.all([sb.from('mercados').select('*').eq('id',mid).single(),sb.from('configuracoes_pedido').select('*').eq('mercado_id',mid).maybeSingle()]);
+ if(m.error){adminContent.innerHTML=`<div class="box">⚠️ ${mcEsc(m.error.message)}</div>`;return}
+ adminContent.innerHTML=`<h3>Configurações do mercado</h3><div class="box"><b>${mcEsc(m.data.nome_fantasia||m.data.nome)}</b><p>${mcEsc(m.data.cidade||'')} ${mcEsc(m.data.estado||'')}</p><p>PIX: ${c.data?.aceitar_pix?'Sim':'Não'} • Cartão: ${c.data?.aceitar_cartao?'Sim':'Não'} • Pedido mínimo: ${mcMoney(c.data?.pedido_minimo||0)}</p><small class="muted">Edição detalhada será habilitada após validarmos todas as abas.</small></div>`;
+}
+
+const mcOldAdminTab=window.adminTab;
+window.adminTab=function(tab){
+ const map={dashboard:mcDashboardOnline,categories:mcCategoriasPainel,brands:mcMarcasPainel,stock:mcEstoquePainel,promos:mcPromosPainel,coupons:mcCuponsPainel,delivery:mcEntregaPainel,team:mcEquipePainel,store:mcConfigPainel};
+ if(map[tab]){map[tab]();return}
+ return mcOldAdminTab(tab);
+};
+window.adminDashboard=mcDashboardOnline;
+</script>
 
 </body>
 </html>
