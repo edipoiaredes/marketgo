@@ -186,16 +186,27 @@ body{background:linear-gradient(180deg,#fbfdf9 0%,#f7faf7 100%);color:#183026}
 <section id="searchPage" class="page"><button class="back" onclick="go('home')">← Voltar</button><div class="head"><h2>Busca</h2></div><div id="searchGrid" class="grid"></div></section>
 
 <section id="admin" class="page">
- <div class="head"><h2>PAINEL DO MERCADO</h2><a onclick="go('home')">Sair</a></div>
- <div class="adminnav"><button onclick="adminTab('dashboard')" class="on">Resumo</button><button onclick="adminTab('products')">Produtos</button><button onclick="adminTab('orders')">Pedidos</button><button onclick="adminTab('store')">Minha loja</button></div>
- <div id="adminContent"></div>
+ <div class="head"><h2>PAINEL DO MERCADO</h2><a onclick="go('home')">Voltar</a></div>
+ <div id="adminLoginBox" class="box">
+   <h3 style="margin-top:0">🔐 Acesso do proprietário</h3>
+   <p class="muted">Entre com o e-mail e a senha cadastrados no Supabase.</p>
+   <div class="field"><label>E-mail</label><input id="adminEmail" type="email" autocomplete="username" placeholder="seu@email.com"></div>
+   <div class="field"><label>Senha</label><input id="adminPassword" type="password" autocomplete="current-password" placeholder="Sua senha"></div>
+   <button class="btn green" style="width:100%" onclick="loginAdminSupabase()">Entrar no painel</button>
+   <div id="adminLoginMsg" class="muted" style="margin-top:10px"></div>
+ </div>
+ <div id="adminPanelBox" style="display:none">
+   <div class="between box" style="margin-bottom:10px"><span id="adminIdentity">Administrador</span><button class="btn light" onclick="logoutAdminSupabase()">Sair</button></div>
+   <div class="adminnav"><button onclick="adminTab('dashboard')" class="on">Resumo</button><button onclick="adminTab('products')">Produtos</button><button onclick="adminTab('orders')">Pedidos</button><button onclick="adminTab('store')">Minha loja</button></div>
+   <div id="adminContent"></div>
+ </div>
 </section>
 </main>
 
 <button class="fab" onclick="openWhats()">☏</button>
 <button id="cartFloat" class="cart-float" onclick="go('cart')"><span><strong id="cartFloatItems">0 itens</strong><small>Revisar minha compra</small></span><strong id="cartFloatTotal">R$ 0,00</strong></button>
 <nav class="bottom">
- <button class="sel" onclick="go('home',this)"><b>⌂</b>Início</button><button onclick="go('categories',this)"><b>☰</b>Categorias</button><button onclick="go('orders',this)"><b>📦</b>Pedidos</button><button onclick="go('cart',this)"><b>🛒</b>Carrinho</button><button onclick="go('account',this)"><b>👤</b>Conta</button><button onclick="go('admin',this)"><b>⚙</b>Mercado</button>
+ <button class="sel" onclick="go('home',this)"><b>⌂</b>Início</button><button onclick="go('categories',this)"><b>☰</b>Categorias</button><button onclick="go('orders',this)"><b>📦</b>Pedidos</button><button onclick="go('cart',this)"><b>🛒</b>Carrinho</button><button onclick="go('account',this)"><b>👤</b>Conta</button><button onclick="openAdmin(this)"><b>⚙</b>Mercado</button>
 </nav>
 
 <script>
@@ -497,6 +508,87 @@ let supabaseProducts = [];
 let supabaseCategories = [];
 let localProductsBackup = null;
 
+let adminMembership = null;
+
+async function openAdmin(btn) {
+  go('admin', btn);
+  await refreshAdminAccess();
+}
+
+async function refreshAdminAccess() {
+  const loginBox = document.getElementById('adminLoginBox');
+  const panelBox = document.getElementById('adminPanelBox');
+  const msg = document.getElementById('adminLoginMsg');
+  if (!loginBox || !panelBox) return;
+
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) {
+    adminMembership = null;
+    loginBox.style.display = 'block';
+    panelBox.style.display = 'none';
+    if (msg) msg.textContent = '';
+    return;
+  }
+
+  const { data: membership, error } = await sb
+    .from('usuarios_mercados')
+    .select('mercado_id,nome,funcao,ativo')
+    .eq('usuario_id', session.user.id)
+    .eq('ativo', true)
+    .in('funcao', ['proprietario','gerente'])
+    .maybeSingle();
+
+  if (error || !membership) {
+    await sb.auth.signOut();
+    adminMembership = null;
+    loginBox.style.display = 'block';
+    panelBox.style.display = 'none';
+    if (msg) msg.textContent = 'Esta conta não possui acesso administrativo a este mercado.';
+    return;
+  }
+
+  adminMembership = membership;
+  loginBox.style.display = 'none';
+  panelBox.style.display = 'block';
+  const ident = document.getElementById('adminIdentity');
+  if (ident) ident.textContent = `👤 ${membership.nome || session.user.email} • ${membership.funcao}`;
+  adminDashboard();
+}
+
+async function loginAdminSupabase() {
+  const email = document.getElementById('adminEmail')?.value.trim();
+  const password = document.getElementById('adminPassword')?.value || '';
+  const msg = document.getElementById('adminLoginMsg');
+  if (!email || !password) {
+    if (msg) msg.textContent = 'Digite seu e-mail e sua senha.';
+    return;
+  }
+  if (msg) msg.textContent = 'Entrando...';
+
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) {
+    if (msg) msg.textContent = 'E-mail ou senha inválidos.';
+    return;
+  }
+  document.getElementById('adminPassword').value = '';
+  await refreshAdminAccess();
+  toast('Acesso ao painel liberado');
+}
+
+async function logoutAdminSupabase() {
+  await sb.auth.signOut();
+  adminMembership = null;
+  await refreshAdminAccess();
+  toast('Você saiu do painel');
+}
+
+sb.auth.onAuthStateChange(() => {
+  if (document.getElementById('admin')?.classList.contains('active')) {
+    setTimeout(refreshAdminAccess, 0);
+  }
+});
+
+
 async function carregarCatalogoSupabase() {
   const badge = document.getElementById('supabaseStatus');
   try {
@@ -568,6 +660,197 @@ async function carregarCatalogoSupabase() {
   }
 }
 document.addEventListener('DOMContentLoaded', carregarCatalogoSupabase);
+</script>
+
+
+<script>
+/* ===== MINHAS COMPRAS • PAINEL DE PRODUTOS SUPABASE ===== */
+let mcCategoriasOnline = [];
+
+function mcEsc(v='') {
+  return String(v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function mcMoney(v) {
+  return Number(v || 0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+}
+async function mcMercadoId() {
+  if (adminMembership?.mercado_id) return adminMembership.mercado_id;
+  if (supabaseStore?.id) return supabaseStore.id;
+  throw new Error('Mercado não identificado.');
+}
+async function mcCarregarCategoriasAdmin() {
+  const mercadoId = await mcMercadoId();
+  const {data,error} = await sb.from('categorias')
+    .select('id,nome,categoria_pai_id,ordem,ativo')
+    .eq('mercado_id',mercadoId).eq('ativo',true)
+    .order('ordem').order('nome');
+  if (error) throw error;
+  mcCategoriasOnline = data || [];
+  return mcCategoriasOnline;
+}
+function mcOpcoesCategoria(selected='') {
+  const parents = mcCategoriasOnline.filter(c => !c.categoria_pai_id);
+  let out = '<option value="">Selecione...</option>';
+  for (const p of parents) {
+    out += `<option value="${p.id}" ${p.id===selected?'selected':''}>${mcEsc(p.nome)}</option>`;
+    for (const c of mcCategoriasOnline.filter(x => x.categoria_pai_id===p.id)) {
+      out += `<option value="${c.id}" ${c.id===selected?'selected':''}>↳ ${mcEsc(c.nome)}</option>`;
+    }
+  }
+  return out;
+}
+async function mcProdutosAdmin() {
+  const mercadoId = await mcMercadoId();
+  const {data,error} = await sb.from('produtos')
+    .select('id,nome,marca,preco,preco_anterior,estoque,unidade,peso_descricao,categoria_id,imagem_url,imagem_storage_path,oferta_dia,oferta_semana,mais_vendido,destaque,ativo,codigo_barras,sku')
+    .eq('mercado_id',mercadoId).order('nome');
+  if (error) throw error;
+  return data || [];
+}
+async function mcAbrirProdutos() {
+  const box = document.getElementById('adminContent');
+  if (!box) return;
+  box.innerHTML = '<div class="box">Carregando produtos...</div>';
+  try {
+    await mcCarregarCategoriasAdmin();
+    const lista = await mcProdutosAdmin();
+    box.innerHTML = `
+      <div class="between" style="gap:10px;margin-bottom:12px">
+        <div><h3 style="margin:0">Produtos</h3><small class="muted">${lista.length} cadastrados no banco</small></div>
+        <button class="btn green" onclick="mcFormProduto()">+ Novo produto</button>
+      </div>
+      <div class="box" style="padding:0;overflow:hidden">
+        ${lista.length ? lista.map(p => `
+          <div style="display:flex;gap:10px;align-items:center;padding:11px;border-bottom:1px solid #eee">
+            <div style="width:48px;height:48px;border-radius:10px;background:#f3f5f3;overflow:hidden;display:grid;place-items:center">
+              ${p.imagem_url ? `<img src="${mcEsc(p.imagem_url)}" alt="" style="width:100%;height:100%;object-fit:cover">` : '🛒'}
+            </div>
+            <div style="flex:1;min-width:0">
+              <b>${mcEsc(p.nome)}</b><br>
+              <small>${mcMoney(p.preco)} • estoque ${Number(p.estoque||0)} ${mcEsc(p.unidade||'UN')} ${p.ativo?'':'• INATIVO'}</small>
+            </div>
+            <button class="btn light" onclick="mcEditarProduto('${p.id}')">Editar</button>
+          </div>`).join('') : '<div style="padding:18px">Nenhum produto cadastrado.</div>'}
+      </div>`;
+  } catch(e) {
+    console.error(e);
+    box.innerHTML = `<div class="box">⚠️ Não foi possível carregar os produtos.<br><small>${mcEsc(e.message)}</small></div>`;
+  }
+}
+function mcFormProduto(p={}) {
+  const box = document.getElementById('adminContent');
+  box.innerHTML = `
+    <div class="between"><h3>${p.id?'Editar':'Novo'} produto</h3><button class="btn light" onclick="mcAbrirProdutos()">← Voltar</button></div>
+    <div class="box">
+      <input type="hidden" id="mcProdId" value="${mcEsc(p.id||'')}">
+      <input type="hidden" id="mcOldPath" value="${mcEsc(p.imagem_storage_path||'')}">
+      <div class="field"><label>Nome *</label><input id="mcNome" value="${mcEsc(p.nome||'')}" placeholder="Ex.: Arroz Branco 1kg"></div>
+      <div class="field"><label>Categoria / subcategoria *</label><select id="mcCategoria">${mcOpcoesCategoria(p.categoria_id||'')}</select></div>
+      <div class="field"><label>Marca</label><input id="mcMarca" value="${mcEsc(p.marca||'')}"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="field"><label>Preço *</label><input id="mcPreco" inputmode="decimal" value="${p.preco??''}" placeholder="0,00"></div>
+        <div class="field"><label>Preço anterior</label><input id="mcPrecoAnt" inputmode="decimal" value="${p.preco_anterior??''}" placeholder="Opcional"></div>
+        <div class="field"><label>Estoque</label><input id="mcEstoque" inputmode="decimal" value="${p.estoque??0}"></div>
+        <div class="field"><label>Unidade</label><select id="mcUnidade">
+          ${['UN','KG','G','L','ML','PCT','CX'].map(u=>`<option ${u===(p.unidade||'UN')?'selected':''}>${u}</option>`).join('')}
+        </select></div>
+      </div>
+      <div class="field"><label>Peso / apresentação</label><input id="mcPeso" value="${mcEsc(p.peso_descricao||'')}" placeholder="Ex.: 1kg, 500ml"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="field"><label>Código de barras</label><input id="mcCodigo" value="${mcEsc(p.codigo_barras||'')}"></div>
+        <div class="field"><label>SKU</label><input id="mcSku" value="${mcEsc(p.sku||'')}"></div>
+      </div>
+      <div class="field"><label>Foto do produto</label><input id="mcFoto" type="file" accept="image/jpeg,image/png,image/webp"><small class="muted">JPG, PNG ou WebP, até 5 MB.</small></div>
+      ${p.imagem_url ? `<img src="${mcEsc(p.imagem_url)}" alt="Foto atual" style="max-width:120px;max-height:120px;border-radius:12px;margin-bottom:10px">` : ''}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 16px">
+        <label><input id="mcDia" type="checkbox" ${p.oferta_dia?'checked':''}> Oferta do dia</label>
+        <label><input id="mcSemana" type="checkbox" ${p.oferta_semana?'checked':''}> Oferta da semana</label>
+        <label><input id="mcMais" type="checkbox" ${p.mais_vendido?'checked':''}> Mais vendido</label>
+        <label><input id="mcDestaque" type="checkbox" ${p.destaque?'checked':''}> Destaque</label>
+        <label><input id="mcAtivo" type="checkbox" ${p.ativo===false?'':'checked'}> Produto ativo</label>
+      </div>
+      <button id="mcSalvarBtn" class="btn green" style="width:100%" onclick="mcSalvarProduto()">Salvar produto</button>
+      <div id="mcProdutoMsg" class="muted" style="margin-top:10px"></div>
+    </div>`;
+}
+async function mcEditarProduto(id) {
+  try {
+    await mcCarregarCategoriasAdmin();
+    const mercadoId = await mcMercadoId();
+    const {data,error}=await sb.from('produtos').select('*').eq('id',id).eq('mercado_id',mercadoId).single();
+    if(error) throw error;
+    mcFormProduto(data);
+  } catch(e) { toast('Não foi possível abrir o produto'); console.error(e); }
+}
+function mcNumero(id, vazioNull=false) {
+  let v=(document.getElementById(id)?.value||'').trim().replace(',','.');
+  if (!v && vazioNull) return null;
+  const n=Number(v||0);
+  return Number.isFinite(n)?n:NaN;
+}
+async function mcUploadFoto(mercadoId) {
+  const input=document.getElementById('mcFoto');
+  const file=input?.files?.[0];
+  if(!file) return null;
+  if(file.size > 5*1024*1024) throw new Error('A foto deve ter no máximo 5 MB.');
+  const ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
+  const path=`${mercadoId}/${crypto.randomUUID()}.${ext}`;
+  const {error}=await sb.storage.from('produtos').upload(path,file,{cacheControl:'3600',upsert:false});
+  if(error) throw error;
+  const {data}=sb.storage.from('produtos').getPublicUrl(path);
+  return {path,url:data.publicUrl};
+}
+async function mcSalvarProduto() {
+  const msg=document.getElementById('mcProdutoMsg');
+  const btn=document.getElementById('mcSalvarBtn');
+  try {
+    const id=document.getElementById('mcProdId').value;
+    const nome=document.getElementById('mcNome').value.trim();
+    const categoria_id=document.getElementById('mcCategoria').value;
+    const preco=mcNumero('mcPreco');
+    const estoque=mcNumero('mcEstoque');
+    if(!nome || !categoria_id || !Number.isFinite(preco) || preco<0) throw new Error('Preencha nome, categoria e preço corretamente.');
+    if(!Number.isFinite(estoque) || estoque<0) throw new Error('Informe um estoque válido.');
+
+    btn.disabled=true; msg.textContent='Salvando...';
+    const mercadoId=await mcMercadoId();
+    const foto=await mcUploadFoto(mercadoId);
+    const payload={
+      mercado_id:mercadoId, categoria_id, nome,
+      marca:document.getElementById('mcMarca').value.trim()||null,
+      preco, preco_anterior:mcNumero('mcPrecoAnt',true),
+      estoque, unidade:document.getElementById('mcUnidade').value,
+      peso_descricao:document.getElementById('mcPeso').value.trim()||null,
+      codigo_barras:document.getElementById('mcCodigo').value.trim()||null,
+      sku:document.getElementById('mcSku').value.trim()||null,
+      oferta_dia:document.getElementById('mcDia').checked,
+      oferta_semana:document.getElementById('mcSemana').checked,
+      mais_vendido:document.getElementById('mcMais').checked,
+      destaque:document.getElementById('mcDestaque').checked,
+      ativo:document.getElementById('mcAtivo').checked
+    };
+    if(foto){ payload.imagem_storage_path=foto.path; payload.imagem_url=foto.url; }
+
+    let res;
+    if(id) res=await sb.from('produtos').update(payload).eq('id',id).eq('mercado_id',mercadoId);
+    else res=await sb.from('produtos').insert(payload);
+    if(res.error) throw res.error;
+
+    msg.textContent='Produto salvo com sucesso.';
+    toast('Produto salvo no Supabase');
+    await carregarCatalogoSupabase();
+    setTimeout(mcAbrirProdutos,300);
+  } catch(e) {
+    console.error(e); msg.textContent='⚠️ '+e.message;
+  } finally { if(btn) btn.disabled=false; }
+}
+
+/* Intercepta somente a aba Produtos do painel antigo. */
+const mcAdminTabOriginal = window.adminTab;
+window.adminTab = function(tab) {
+  if(tab === 'products') { mcAbrirProdutos(); return; }
+  return mcAdminTabOriginal(tab);
+};
 </script>
 
 </body>
